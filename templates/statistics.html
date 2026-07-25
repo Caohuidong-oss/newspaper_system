@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+{% block title %}统计查询{% endblock %}
+
+{% block content %}
+{# ========== 页面标题 ========== #}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+    <div class="d-flex align-items-center gap-2">
+        <span class="fs-2">📊</span>
+        <div>
+            <h2 class="mb-0">{% if session.role == 'admin' %}全局{% else %}我的{% endif %}订阅统计</h2>
+            <small class="text-muted">数据概览与分析</small>
+        </div>
+    </div>
+    <a href="{{ url_for('export_statistics') }}" class="btn btn-outline-success rounded-pill px-3 shadow-sm">
+        <span class="me-1">📤</span> 导出 Excel
+    </a>
+</div>
+
+{# ========== 统计卡片 ========== #}
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3 fade-in">
+        <div class="card stat-card shadow-sm text-white" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+            <div class="card-body">
+                <span class="stat-icon">📰</span>
+                <div class="stat-value">{{ total_subscriptions }}</div>
+                <div class="stat-label">总订阅份数</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3 fade-in">
+        <div class="card stat-card shadow-sm text-white" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+            <div class="card-body">
+                <span class="stat-icon">💰</span>
+                <div class="stat-value">¥{{ "%.0f"|format(total_revenue) }}</div>
+                <div class="stat-label">总订单金额</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3 fade-in">
+        <div class="card stat-card shadow-sm text-white" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+            <div class="card-body">
+                <span class="stat-icon">📦</span>
+                <div class="stat-value">{{ total_orders }}</div>
+                <div class="stat-label">订单总数</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3 fade-in">
+        <div class="card stat-card shadow-sm text-white" style="background: linear-gradient(135deg, #11998e, #38ef7d);">
+            <div class="card-body">
+                <span class="stat-icon">👥</span>
+                <div class="stat-value">{{ total_users }} / {{ total_newspapers }}</div>
+                <div class="stat-label">订户 / 报刊</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    {# ========== 柱状图 ========== #}
+    <div class="col-md-8">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">📊 {% if session.role == 'admin' %}各报刊{% else %}我订阅的报刊{% endif %}订阅金额</h5>
+            </div>
+            <div class="card-body">
+                {% if stats %}
+                    <canvas id="amountChart" style="max-height: 300px;"></canvas>
+                {% else %}
+                    <p class="text-muted text-center py-4 mb-0">暂无数据</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {# ========== 饼图 ========== #}
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">📈 金额占比</h5>
+            </div>
+            <div class="card-body">
+                {% if stats %}
+                    <canvas id="pieChart" style="max-height: 300px;"></canvas>
+                {% else %}
+                    <p class="text-muted text-center py-4 mb-0">暂无数据</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{# ========== 报刊统计表格 ========== #}
+<div class="card shadow-sm mt-4">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">📋 {% if session.role == 'admin' %}各报刊{% else %}我订阅的报刊{% endif %}明细</h5>
+    </div>
+    <div class="card-body p-0">
+        {% if stats %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>报刊名称</th>
+                        <th>订阅总份数</th>
+                        <th>订阅总金额（元）</th>
+                        <th style="width: 40%;">占比</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set total = stats|sum(attribute='total_amount') %}
+                    {% for stat in stats %}
+                    <tr>
+                        <td><strong>{{ stat.name }}</strong></td>
+                        <td><span class="badge bg-secondary">{{ stat.total_quantity }}</span></td>
+                        <td class="text-danger fw-bold">¥{{ "%.2f"|format(stat.total_amount) }}</td>
+                        <td>
+                            {% if total > 0 %}
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="progress flex-grow-1" style="height: 8px;">
+                                    <div class="progress-bar bg-primary" role="progressbar"
+                                         style="width: {{ (stat.total_amount / total * 100)|round(1) }}%;"
+                                         aria-valuenow="{{ (stat.total_amount / total * 100)|round(1) }}"
+                                         aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <small class="text-muted">{{ "%.1f"|format(stat.total_amount / total * 100) }}%</small>
+                            </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-center text-muted py-4 mb-0">暂无数据</p>
+        {% endif %}
+    </div>
+</div>
+
+{# ========== 按类型统计 ========== #}
+{% if type_stats %}
+<div class="card shadow-sm mt-4">
+    <div class="card-header bg-white">
+        <h5 class="mb-0">📂 按报刊类型统计</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>类型</th>
+                        <th>总份数</th>
+                        <th>总金额（元）</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in type_stats %}
+                    <tr>
+                        <td><span class="badge bg-info">{{ t.type or '未分类' }}</span></td>
+                        <td>{{ t.total_quantity }}</td>
+                        <td class="text-danger fw-bold">¥{{ "%.2f"|format(t.total_amount) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{# ========== Chart.js 图表 ========== #}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    {% if stats %}
+    const labels = {{ chart_labels|tojson }};
+    const data = {{ chart_data|tojson }};
+    const colors = {{ chart_colors|tojson }};
+
+    new Chart(document.getElementById('amountChart'), {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: '订阅金额（元）',
+                data: data,
+                backgroundColor: 'rgba(102, 126, 234, 0.5)',
+                borderColor: 'rgba(102, 126, 234, 1)',
+                borderWidth: 1,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
+    new Chart(document.getElementById('pieChart'), {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: colors,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { boxWidth: 12, padding: 8, font: { size: 11 } }
+                }
+            }
+        }
+    });
+    {% endif %}
+</script>
+{% endblock %}

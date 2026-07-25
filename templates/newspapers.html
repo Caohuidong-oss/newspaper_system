@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% import "_macros.html" as ui %}
+{% block title %}报刊目录{% endblock %}
+
+{% block content %}
+{# ========== 页面标题 ========== #}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="mb-1">📰 报刊目录</h2>
+        <p class="text-muted mb-0 small">共 {{ newspapers|length }} 种报刊</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('export_newspapers') }}" class="btn btn-outline-success rounded-pill px-3 shadow-sm">
+            <span class="me-1">📤</span> 导出
+        </a>
+        {% if session.role == 'admin' %}
+            <a href="{{ url_for('newspaper_add') }}" class="btn btn-primary rounded-pill px-4 shadow-sm">
+                <span class="me-1">➕</span> 添加报刊
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+{# ========== 搜索区 ========== #}
+<div class="card shadow-sm mb-4">
+    <div class="card-body pb-2">
+        <form method="GET">
+            <div class="row g-2 align-items-end">
+                <div class="col-md-5">
+                    <label class="form-label small text-muted mb-1">🔍 搜索报刊</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="keyword"
+                               placeholder="搜索报刊名称..." value="{{ keyword }}">
+                        <button class="btn btn-primary px-4" type="submit">搜索</button>
+                        {% if keyword %}
+                            <a href="{{ url_for('newspapers') }}" class="btn btn-outline-secondary">清除</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# ========== 报刊卡片网格 ========== #}
+{% if newspapers %}
+<div class="row g-4">
+    {% for n in newspapers %}
+    <div class="col-sm-6 col-lg-4 fade-in">
+        <a href="{{ url_for('newspaper_detail', newspaper_id=n.newspaper_id) }}" class="text-decoration-none">
+            <div class="card h-100 shadow-sm border-0">
+                <!-- 图片区 -->
+                <div class="overflow-hidden" style="height: 200px;">
+                    {% if n.image %}
+                        <img src="{{ url_for('static', filename='uploads/' + n.image) }}"
+                             alt="{{ n.name }}" class="card-img-top w-100 h-100"
+                             style="object-fit: cover;">
+                    {% else %}
+                        <div class="bg-light d-flex align-items-center justify-content-center w-100 h-100"
+                             style="font-size: 5rem;">
+                            📰
+                        </div>
+                    {% endif %}
+                </div>
+                <!-- 信息区 -->
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title mb-0 text-dark">{{ n.name }}</h5>
+                        <span class="fs-5 fw-bold text-danger">¥{{ n.price }}</span>
+                    </div>
+                    <div class="d-flex gap-1 mb-2">
+                        {% if n.type %}
+                            <span class="badge bg-info bg-opacity-10 text-info">{{ n.type }}</span>
+                        {% endif %}
+                        {% if n.period %}
+                            <span class="badge bg-secondary bg-opacity-10 text-secondary">📅 {{ n.period }}</span>
+                        {% endif %}
+                    </div>
+                    <p class="card-text small text-muted mb-0 text-truncate">
+                        {{ n.description or '暂无简介' }}
+                    </p>
+                </div>
+                <!-- 操作区 -->
+                {% if session.role == 'admin' %}
+                <div class="card-footer bg-white border-top-0 d-flex gap-2 pt-0">
+                    <a href="{{ url_for('newspaper_edit', newspaper_id=n.newspaper_id) }}"
+                       class="btn btn-sm btn-outline-warning rounded-pill flex-fill">✏️ 编辑</a>
+                    <form action="{{ url_for('newspaper_delete', newspaper_id=n.newspaper_id) }}"
+                          method="POST" style="display:inline; flex:1;"
+                          onsubmit="return confirm('确定要删除该报刊吗？');">
+                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill w-100">🗑️ 删除</button>
+                    </form>
+                </div>
+                {% else %}
+                <div class="card-footer bg-white border-top-0 pt-0">
+                    <span class="text-muted small">📖 点击查看详情 →</span>
+                </div>
+                {% endif %}
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+
+{% else %}
+{# ========== 空状态 ========== #}
+<div class="text-center py-5 fade-in">
+    <div class="display-1 text-muted mb-3">📰</div>
+    <h4 class="text-muted mb-2">
+        {% if keyword %}
+            没有找到匹配的报刊
+        {% else %}
+            暂无报刊数据
+        {% endif %}
+    </h4>
+    <p class="text-muted mb-4">
+        {% if keyword %}
+            试试其他关键词
+        {% else %}
+            管理员可以添加报刊
+        {% endif %}
+    </p>
+    {% if keyword %}
+        <a href="{{ url_for('newspapers') }}" class="btn btn-outline-secondary rounded-pill px-4">清除搜索</a>
+    {% elif session.role == 'admin' %}
+        <a href="{{ url_for('newspaper_add') }}" class="btn btn-primary rounded-pill px-4">➕ 添加报刊</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{{ ui.render_pagination(pagination, 'newspapers') }}
+
+{% endblock %}

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>订单 #{{ order.order_id }} - 打印</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f5f7fa;
+            padding: 20px 0;
+        }
+        .print-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 50px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.1);
+            border-radius: 8px;
+        }
+        .print-header {
+            border-bottom: 3px double #667eea;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .print-header h1 {
+            color: #667eea;
+            font-weight: 700;
+        }
+        .info-row {
+            display: flex;
+            padding: 8px 0;
+            border-bottom: 1px dashed #e9ecef;
+        }
+        .info-label {
+            font-weight: 600;
+            color: #6c757d;
+            width: 100px;
+            flex-shrink: 0;
+        }
+        .info-value {
+            flex: 1;
+        }
+        .seal {
+            display: inline-block;
+            border: 3px solid #dc3545;
+            color: #dc3545;
+            font-weight: 700;
+            padding: 6px 16px;
+            border-radius: 4px;
+            transform: rotate(-8deg);
+            font-size: 1.1rem;
+        }
+        .total-section {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        /* 打印时去掉背景和阴影 */
+        @media print {
+            body { background: #fff; padding: 0; }
+            .print-container {
+                box-shadow: none;
+                padding: 20px;
+                max-width: 100%;
+            }
+            .no-print { display: none !important; }
+            .seal { color: #dc3545 !important; }
+        }
+    </style>
+</head>
+<body>
+
+{# ========== 工具栏（仅屏幕显示） ========== #}
+<div class="container no-print mb-3">
+    <div class="d-flex justify-content-between align-items-center bg-white p-3 rounded shadow-sm">
+        <div>
+            <strong>📄 订单打印预览</strong>
+            <small class="text-muted ms-2">此页面为打印优化版</small>
+        </div>
+        <div class="d-flex gap-2">
+            <button onclick="window.print()" class="btn btn-primary btn-sm rounded-pill px-3">🖨️ 立即打印</button>
+            <a href="{{ url_for('order_detail', order_id=order.order_id) }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">⬅️ 返回详情</a>
+        </div>
+    </div>
+</div>
+
+<div class="print-container">
+    {# ========== 抬头 ========== #}
+    <div class="print-header text-center">
+        <h1 class="mb-1">📰 报刊订阅订单</h1>
+        <p class="text-muted mb-0">报刊订阅管理系统</p>
+    </div>
+
+    {# ========== 订单基本信息 ========== #}
+    <div class="row mb-4">
+        <div class="col-6">
+            <div class="info-row">
+                <span class="info-label">订单号</span>
+                <span class="info-value fs-5 fw-bold text-primary">#{{ order.order_id }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">下单时间</span>
+                <span class="info-value">{{ order.order_date.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">订单状态</span>
+                <span class="info-value">
+                    {% if order.status == 1 %}
+                        <span class="text-warning fw-bold">⏳ 待处理</span>
+                    {% elif order.status == 2 %}
+                        <span class="text-success fw-bold">✅ 已确认</span>
+                    {% elif order.status == 3 %}
+                        <span class="text-danger fw-bold">❌ 已取消</span>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="info-row">
+                <span class="info-label">订户姓名</span>
+                <span class="info-value fw-bold">{{ order.user.real_name }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">联系电话</span>
+                <span class="info-value">{{ order.user.phone or '未填写' }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">收货地址</span>
+                <span class="info-value">{{ order.user.address or '未填写' }}</span>
+            </div>
+            {% if order.note %}
+            <div class="info-row">
+                <span class="info-label">订单备注</span>
+                <span class="info-value">{{ order.note }}</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {# ========== 订阅明细 ========== #}
+    <h5 class="mb-3">📋 订阅明细</h5>
+    <table class="table table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th style="width: 5%;">#</th>
+                <th>报刊名称</th>
+                <th style="width: 15%;">类型</th>
+                <th style="width: 15%;" class="text-end">单价</th>
+                <th style="width: 10%;" class="text-center">数量</th>
+                <th style="width: 15%;" class="text-end">小计</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sub in order.subscriptions %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td><strong>{{ sub.newspaper.name }}</strong></td>
+                <td>{{ sub.newspaper.type or '-' }}</td>
+                <td class="text-end">¥{{ "%.2f"|format(sub.newspaper.price) }}</td>
+                <td class="text-center">{{ sub.quantity }}</td>
+                <td class="text-end fw-bold">¥{{ "%.2f"|format(sub.subtotal) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr class="table-active">
+                <td colspan="5" class="text-end fw-bold">合计金额：</td>
+                <td class="text-end fw-bold text-danger fs-5">¥{{ "%.2f"|format(order.total_amount) }}</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    {# ========== 合计提示框 ========== #}
+    <div class="total-section">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <small class="text-muted">应付金额</small>
+                <div class="fs-3 fw-bold text-danger">¥{{ "%.2f"|format(order.total_amount) }}</div>
+            </div>
+            {% if order.status == 2 %}
+                <div class="seal">✓ 已确认</div>
+            {% endif %}
+        </div>
+    </div>
+
+    {# ========== 底部说明 ========== #}
+    <div class="row mt-5">
+        <div class="col-6">
+            <p class="text-muted small mb-1">客户签字：____________________</p>
+            <p class="text-muted small">日期：________________________</p>
+        </div>
+        <div class="col-6 text-end">
+            <p class="text-muted small mb-1">报刊订阅系统</p>
+            <p class="text-muted small">打印时间：<span id="printTime"></span></p>
+        </div>
+    </div>
+
+    <div class="text-center text-muted small mt-4">
+        <p>本订单由报刊订阅管理系统生成 · 妥善保管</p>
+    </div>
+</div>
+
+<script>
+    // 自动填充打印时间
+    document.getElementById('printTime').textContent = new Date().toLocaleString('zh-CN');
+</script>
+</body>
+</html>

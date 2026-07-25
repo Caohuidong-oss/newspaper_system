@@ -1,0 +1,14 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.env
+
+# IDE
+.idea/
+
+# 上传目录里的用户图片保留（种子报刊封面需要随仓库部署）
+# 仅忽略临时文件
+static/uploads/*.tmp

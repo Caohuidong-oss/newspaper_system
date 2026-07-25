@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}注册{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center" style="margin-top: 40px;">
+    <div class="col-md-5 col-lg-4">
+        <div class="card shadow-lg border-0 overflow-hidden">
+            <div class="card-body p-4 text-white text-center"
+                 style="background: linear-gradient(135deg, #11998e, #38ef7d);">
+                <div class="mb-2" style="font-size: 3rem;">📝</div>
+                <h3 class="fw-bold mb-1">注册新账号</h3>
+                <small class="opacity-75">创建后即可订阅报刊</small>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="username" class="form-label small fw-bold text-muted">用户名</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light">👤</span>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label small fw-bold text-muted">密码</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light">🔒</span>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirm_password" class="form-label small fw-bold text-muted">确认密码</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light">🔐</span>
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-muted">注册身份</label>
+                        <div class="alert alert-light border py-2 mb-0 d-flex align-items-center gap-2">
+                            <span class="fs-4">📖</span>
+                            <div>
+                                <strong>订阅者</strong>
+                                <small class="text-muted d-block">注册即可订阅报刊、查看订单</small>
+                            </div>
+                        </div>
+                        <input type="hidden" name="role" value="user">
+                    </div>
+                    <button type="submit" class="btn btn-success w-100 rounded-pill py-2 fw-bold shadow-sm"
+                            style="background: linear-gradient(135deg, #11998e, #38ef7d); border: none;">
+                        ✅ 注 册
+                    </button>
+                </form>
+                <p class="mt-4 text-center text-muted small">
+                    已有账号？<a href="{{ url_for('login') }}" class="fw-bold">立即登录 →</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

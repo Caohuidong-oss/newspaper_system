@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}设置安全问题{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-decoration-none">首页</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('profile') }}" class="text-decoration-none">个人中心</a></li>
+                <li class="breadcrumb-item active" aria-current="page">设置安全问题</li>
+            </ol>
+        </nav>
+
+        <div class="card shadow">
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0">🔐 设置安全问题</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info small">
+                    <strong>💡 为什么设置安全问题？</strong><br>
+                    忘记密码时可通过回答安全问题重置密码，无需联系管理员。
+                </div>
+
+                {% if login_user.security_question %}
+                <div class="alert alert-success small">
+                    ✅ <strong>当前已设置：</strong>{{ login_user.security_question }}
+                </div>
+                {% else %}
+                <div class="alert alert-warning small">
+                    ⚠️ 您还未设置安全问题，无法使用密码找回功能。
+                </div>
+                {% endif %}
+
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="question" class="form-label fw-bold">选择一个安全问题</label>
+                        <select class="form-select" id="question" name="question" required>
+                            <option value="">-- 请选择 --</option>
+                            {% for q in questions %}
+                            <option value="{{ q }}" {% if login_user.security_question == q %}selected{% endif %}>{{ q }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="answer" class="form-label fw-bold">您的答案</label>
+                        <input type="text" class="form-control" id="answer" name="answer"
+                               placeholder="请输入答案（不区分大小写，至少2个字符）" required minlength="2">
+                        <small class="text-muted">⚠️ 请牢记答案，忘记后将无法找回密码！</small>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-warning rounded-pill px-4">💾 保存</button>
+                        <a href="{{ url_for('profile') }}" class="btn btn-outline-secondary rounded-pill px-4">取消</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

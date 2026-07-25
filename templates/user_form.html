@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}{{ '编辑订户' if user else '添加订户' }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4>{{ '✏️ 编辑订户' if user else '➕ 添加订户' }}</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">用户名 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="username" name="username" 
+                               value="{{ user.username if user else '' }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">密码 <span class="text-danger">{% if not user %}*{% endif %}</span></label>
+                        <input type="password" class="form-control" id="password" name="password" 
+                               {% if not user %}required{% endif %}>
+                        {% if user %}
+                        <small class="text-muted">留空则不修改密码</small>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="real_name" class="form-label">真实姓名 <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="real_name" name="real_name" 
+                               value="{{ user.real_name if user else '' }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">电话</label>
+                        <input type="text" class="form-control" id="phone" name="phone" 
+                               value="{{ user.phone if user else '' }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">地址</label>
+                        <input type="text" class="form-control" id="address" name="address" 
+                               value="{{ user.address if user else '' }}">
+                    </div>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                    <a href="{{ url_for('users') }}" class="btn btn-secondary">取消</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

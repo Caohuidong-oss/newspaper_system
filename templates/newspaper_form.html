@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}{{ '编辑报刊' if newspaper else '添加报刊' }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="fs-2">{{ '✏️' if newspaper else '➕' }}</span>
+            <div>
+                <h2 class="mb-0">{{ '编辑报刊' if newspaper else '添加报刊' }}</h2>
+                <small class="text-muted">{{ '修改报刊' + newspaper.name if newspaper else '录入新的报刊信息' }}</small>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label for="name" class="form-label small fw-bold text-muted">报刊名称 <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="name" name="name"
+                                   value="{{ newspaper.name if newspaper else '' }}" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="price" class="form-label small fw-bold text-muted">单价（元） <span class="text-danger">*</span></label>
+                            <input type="number" step="0.01" class="form-control" id="price" name="price"
+                                   value="{{ newspaper.price if newspaper else '' }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="type" class="form-label small fw-bold text-muted">类型</label>
+                            <input type="text" class="form-control" id="type" name="type"
+                                   value="{{ newspaper.type if newspaper else '' }}" placeholder="如：日报、周刊、月刊">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="period" class="form-label small fw-bold text-muted">出版周期</label>
+                            <input type="text" class="form-control" id="period" name="period"
+                                   value="{{ newspaper.period if newspaper else '' }}" placeholder="如：日、周、月">
+                        </div>
+                        <div class="col-12">
+                            <label for="image" class="form-label small fw-bold text-muted">报刊图片</label>
+                            <input type="file" class="form-control" id="image" name="image"
+                                   accept="image/png,image/jpeg,image/gif,image/webp">
+                            {% if newspaper and newspaper.image %}
+                            <div class="mt-2 d-flex align-items-center gap-3">
+                                <img src="{{ url_for('static', filename='uploads/' + newspaper.image) }}"
+                                     alt="{{ newspaper.name }}"
+                                     style="height: 80px; border-radius: 6px; object-fit: cover;">
+                                <small class="text-muted">当前图片，上传新图将替换</small>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-12">
+                            <label for="description" class="form-label small fw-bold text-muted">简介</label>
+                            <textarea class="form-control" id="description" name="description"
+                                      rows="4">{{ newspaper.description if newspaper else '' }}</textarea>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2 mt-4 pt-3 border-top">
+                        <button type="submit" class="btn btn-primary rounded-pill px-4">💾 保存</button>
+                        <a href="{{ url_for('newspapers') }}" class="btn btn-outline-secondary rounded-pill px-4">取消</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

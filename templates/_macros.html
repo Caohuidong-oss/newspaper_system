@@ -1,0 +1,39 @@
+{# ========== 通用分页宏（全局可用） ========== #}
+{% macro render_pagination(page_obj, endpoint) %}
+{% if page_obj and page_obj.pages > 1 %}
+{# 提取除 page 外的所有查询参数 #}
+{% set _args = request.args.to_dict() %}
+{% if 'page' in _args %}{% set _ = _args.pop('page') %}{% endif %}
+<nav class="mt-4">
+    <ul class="pagination justify-content-center">
+        <li class="page-item {% if not page_obj.has_prev %}disabled{% endif %}">
+            <a class="page-link rounded-pill mx-1" href="{% if page_obj.has_prev %}{{ url_for(endpoint, page=page_obj.prev_num, **_args) }}{% else %}#{% endif %}">
+                ‹ 上一页
+            </a>
+        </li>
+
+        {% for p in page_obj.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+            {% if p %}
+                {% if p == page_obj.page %}
+                    <li class="page-item active"><span class="page-link rounded-pill mx-1">{{ p }}</span></li>
+                {% else %}
+                    <li class="page-item"><a class="page-link rounded-pill mx-1" href="{{ url_for(endpoint, page=p, **_args) }}">{{ p }}</a></li>
+                {% endif %}
+            {% else %}
+                <li class="page-item disabled"><span class="page-link rounded-pill mx-1">…</span></li>
+            {% endif %}
+        {% endfor %}
+
+        <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+            <a class="page-link rounded-pill mx-1" href="{% if page_obj.has_next %}{{ url_for(endpoint, page=page_obj.next_num, **_args) }}{% else %}#{% endif %}">
+                下一页 ›
+            </a>
+        </li>
+
+        <li class="page-item ms-2">
+            <span class="page-link border-0 bg-light">共 {{ page_obj.total }} 条 · {{ page_obj.page }}/{{ page_obj.pages }} 页</span>
+        </li>
+    </ul>
+</nav>
+{% endif %}
+{% endmacro %}

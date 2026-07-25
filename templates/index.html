@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+{% block title %}首页{% endblock %}
+
+{% block content %}
+
+{# ========== 顶部 Hero 区 ========== #}
+<div class="card border-0 shadow-sm overflow-hidden mb-4 fade-in">
+    <div class="card-body p-5"
+         style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff;">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-5 fw-bold mb-2">📰 报刊订阅管理系统</h1>
+                <p class="fs-5 opacity-90 mb-3">
+                    高效管理订户、报刊目录、订单数据，提供全面的查询与统计分析功能。
+                </p>
+                {% if session.user_id %}
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <span class="opacity-75">当前登录：</span>
+                        <strong class="fs-6">{{ session.username }}</strong>
+                        {% if session.role == 'admin' %}
+                            <span class="badge bg-danger">⚙️ 管理员</span>
+                        {% else %}
+                            <span class="badge bg-info">📖 订阅者</span>
+                        {% endif %}
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% if session.role != 'admin' %}
+                            <a href="{{ url_for('order_add') }}" class="btn btn-light rounded-pill px-4 shadow-sm">
+                                📦 我要订阅
+                            </a>
+                        {% endif %}
+                        <a href="{{ url_for('statistics') }}" class="btn btn-outline-light rounded-pill px-4">
+                            📊 查看统计
+                        </a>
+                    </div>
+                {% else %}
+                    <p class="opacity-75 mb-3">请登录后使用完整功能</p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{{ url_for('login') }}" class="btn btn-light rounded-pill px-4 shadow-sm">
+                            🔑 登录
+                        </a>
+                        <a href="{{ url_for('register') }}" class="btn btn-outline-light rounded-pill px-4">
+                            📝 注册
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="col-md-4 d-none d-md-block text-end">
+                <div style="font-size: 8rem; opacity: 0.25;">📚</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# ========== 数据概览卡片（仅登录用户可见） ========== #}
+{% if session.user_id and is_admin %}
+<div class="row g-3 mb-4">
+    <a href="{{ url_for('newspapers') }}" class="col-6 col-md-3 text-decoration-none fade-in">
+        <div class="card stat-card shadow-sm text-white h-100" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+            <div class="card-body">
+                <span class="stat-icon">📰</span>
+                <div class="stat-value">{{ total_newspapers }}</div>
+                <div class="stat-label">报刊种类 →</div>
+            </div>
+        </div>
+    </a>
+    <a href="{{ url_for('users') }}" class="col-6 col-md-3 text-decoration-none fade-in">
+        <div class="card stat-card shadow-sm text-white h-100" style="background: linear-gradient(135deg, #11998e, #38ef7d);">
+            <div class="card-body">
+                <span class="stat-icon">👥</span>
+                <div class="stat-value">{{ total_users }}</div>
+                <div class="stat-label">订户总数 →</div>
+            </div>
+        </div>
+    </a>
+    <a href="{{ url_for('orders') }}" class="col-6 col-md-3 text-decoration-none fade-in">
+        <div class="card stat-card shadow-sm text-white h-100" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+            <div class="card-body">
+                <span class="stat-icon">📦</span>
+                <div class="stat-value">{{ total_orders }}</div>
+                <div class="stat-label">订单总数 →</div>
+            </div>
+        </div>
+    </a>
+    <a href="{{ url_for('statistics') }}" class="col-6 col-md-3 text-decoration-none fade-in">
+        <div class="card stat-card shadow-sm text-white h-100" style="background: linear-gradient(135deg, #f5576c, #ff6b6b);">
+            <div class="card-body">
+                <span class="stat-icon">💰</span>
+                <div class="stat-value">¥{{ "%.0f"|format(total_revenue) }}</div>
+                <div class="stat-label">总订阅金额 →</div>
+            </div>
+        </div>
+    </a>
+</div>
+{% endif %}
+
+{% if session.user_id and not is_admin %}
+<div class="row g-3 mb-4 justify-content-center">
+    <a href="{{ url_for('newspapers') }}" class="col-12 col-sm-6 col-md-4 text-decoration-none fade-in">
+        <div class="card stat-card shadow-sm text-white h-100" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+            <div class="card-body">
+                <span class="stat-icon">📰</span>
+                <div class="stat-value">{{ total_newspapers }}</div>
+                <div class="stat-label">报刊种类 →</div>
+            </div>
+        </div>
+    </a>
+    <a href="{{ url_for('orders') }}" class="col-12 col-sm-6 col-md-4 text-decoration-none fade-in">
+        <div class="card stat-card shadow-sm text-white h-100" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+            <div class="card-body">
+                <span class="stat-icon">📦</span>
+                <div class="stat-value">{{ total_orders }}</div>
+                <div class="stat-label">我的订单 →</div>
+            </div>
+        </div>
+    </a>
+    <a href="{{ url_for('statistics') }}" class="col-12 col-sm-6 col-md-4 text-decoration-none fade-in">
+        <div class="card stat-card shadow-sm text-white h-100" style="background: linear-gradient(135deg, #f5576c, #ff6b6b);">
+            <div class="card-body">
+                <span class="stat-icon">💰</span>
+                <div class="stat-value">¥{{ "%.0f"|format(total_revenue) }}</div>
+                <div class="stat-label">我的消费 →</div>
+            </div>
+        </div>
+    </a>
+</div>
+{% endif %}
+
+{# ========== 双栏布局（仅登录用户可见） ========== #}
+{% if session.user_id %}
+<div class="row g-4">
+    {# 左侧：最近订单 #}
+    <div class="col-lg-7">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">🕐 最近订单</h5>
+                <a href="{{ url_for('orders') }}" class="text-decoration-none small">查看全部 →</a>
+            </div>
+            <div class="card-body p-0">
+                {% if recent_orders %}
+                <div class="list-group list-group-flush">
+                    {% for order in recent_orders %}
+                    <a href="{{ url_for('order_detail', order_id=order.order_id) }}"
+                       class="list-group-item list-group-item-action">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="d-flex align-items-center justify-content-center rounded-circle bg-light"
+                                     style="width: 40px; height: 40px;">🧾</div>
+                                <div>
+                                    <div class="d-flex align-items-center gap-2 mb-1">
+                                        <strong>#{{ order.order_id }}</strong>
+                                        {% if order.status == 1 %}
+                                            <span class="status-badge pending"><span class="status-dot pending"></span>待处理</span>
+                                        {% elif order.status == 2 %}
+                                            <span class="status-badge confirmed"><span class="status-dot confirmed"></span>已确认</span>
+                                        {% elif order.status == 3 %}
+                                            <span class="status-badge cancelled"><span class="status-dot cancelled"></span>已取消</span>
+                                        {% endif %}
+                                    </div>
+                                    <small class="text-muted">
+                                        👤 {{ order.user.real_name }} · 🕐 {{ order.order_date.strftime('%m-%d %H:%M') }}
+                                    </small>
+                                </div>
+                            </div>
+                            <strong class="text-danger fs-6">¥{{ "%.2f"|format(order.total_amount) }}</strong>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <div class="text-muted">📭 暂无订单</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {# 右侧：热门报刊 + 快捷操作 #}
+    <div class="col-lg-5">
+        <div class="card shadow-sm mb-3">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">🔥 热门报刊</h5>
+                <a href="{{ url_for('newspapers') }}" class="text-decoration-none small">全部 →</a>
+            </div>
+            <div class="card-body">
+                {% if top_newspapers %}
+                    {% for item in top_newspapers %}
+                    <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                        <span class="text-truncate me-2">{{ item.name }}</span>
+                        <span class="badge bg-primary rounded-pill flex-shrink-0">{{ item.total_qty }} 份</span>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted text-center mb-0">暂无订阅数据</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">⚡ 快捷操作</h5>
+            </div>
+            <div class="card-body d-flex flex-wrap gap-2">
+                {% if session.role != 'admin' %}
+                    <a href="{{ url_for('order_add') }}" class="btn btn-outline-primary btn-sm rounded-pill">📦 我要订阅</a>
+                {% endif %}
+                <a href="{{ url_for('order_query') }}" class="btn btn-outline-info btn-sm rounded-pill">🔍 查询订单</a>
+                <a href="{{ url_for('statistics') }}" class="btn btn-outline-danger btn-sm rounded-pill">📊 查看统计</a>
+                {% if session.role == 'admin' %}
+                    <a href="{{ url_for('newspaper_add') }}" class="btn btn-outline-warning btn-sm rounded-pill">📰 添加报刊</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{# ========== 未登录：显示功能引导 ========== #}
+{% if not session.user_id %}
+<div class="row g-3 mb-4">
+    <div class="col-md-4 fade-in">
+        <div class="card shadow-sm border-0 h-100 text-center">
+            <div class="card-body p-4">
+                <div class="display-4 mb-2">📰</div>
+                <h5>丰富的报刊目录</h5>
+                <p class="text-muted small mb-0">浏览各类报刊杂志</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 fade-in">
+        <div class="card shadow-sm border-0 h-100 text-center">
+            <div class="card-body p-4">
+                <div class="display-4 mb-2">📦</div>
+                <h5>便捷在线订阅</h5>
+                <p class="text-muted small mb-0">几步完成下单订阅</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 fade-in">
+        <div class="card shadow-sm border-0 h-100 text-center">
+            <div class="card-body p-4">
+                <div class="display-4 mb-2">📊</div>
+                <h5>详细数据分析</h5>
+                <p class="text-muted small mb-0">订阅数据一目了然</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
