@@ -14,6 +14,7 @@
 <div class="card shadow-sm">
     <div class="card-body">
         <form method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             {# ========== 选择订户（管理员） ========== #}
             {% if session.role == 'admin' %}
             <div class="card bg-light border-0 mb-4">

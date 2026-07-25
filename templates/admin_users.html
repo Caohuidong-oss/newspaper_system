@@ -44,6 +44,7 @@
                             {% else %}
                                 <form action="{{ url_for('admin_set_role', user_id=u.id) }}" method="POST" style="display:inline;"
                                       onsubmit="return confirm('确定要{{ '取消' if u.role == 'admin' else '设为' }}{{ u.username }}的管理员权限？');">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     {% if u.role == 'admin' %}
                                         <button type="submit" class="btn btn-sm btn-outline-warning rounded-pill">⬇️ 降为订阅者</button>
                                     {% else %}

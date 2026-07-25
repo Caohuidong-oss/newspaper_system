@@ -15,6 +15,7 @@
         <div class="card shadow-sm">
             <div class="card-body p-4">
                 <form method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class="row g-3">
                         <div class="col-md-8">
                             <label for="name" class="form-label small fw-bold text-muted">报刊名称 <span class="text-danger">*</span></label>

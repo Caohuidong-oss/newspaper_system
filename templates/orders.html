@@ -124,6 +124,7 @@
                         onclick="batchSubmit('delete')">🗑️ 批量删除</button>
                 <form action="{{ url_for('order_clean_empty') }}" method="POST" style="display:inline;"
                       onsubmit="return confirm('确定要清理所有空订单（无订阅明细）？');">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button type="submit" class="btn btn-sm btn-outline-secondary rounded-pill">🧹 清理空订单</button>
                 </form>
             </div>
@@ -183,6 +184,7 @@
                                     <form action="{{ url_for('order_confirm', order_id=order.order_id) }}"
                                           method="POST" style="display:inline;"
                                           onsubmit="return confirm('确定确认该订单？');">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                         <button type="submit" class="btn btn-sm btn-outline-success rounded-pill">确认</button>
                                     </form>
                                 {% endif %}
@@ -190,12 +192,14 @@
                                     <form action="{{ url_for('order_cancel', order_id=order.order_id) }}"
                                           method="POST" style="display:inline;"
                                           onsubmit="return confirm('确定取消该订单？');">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                         <button type="submit" class="btn btn-sm btn-outline-warning rounded-pill">取消</button>
                                     </form>
                                 {% endif %}
                                 <form action="{{ url_for('order_delete', order_id=order.order_id) }}"
                                       method="POST" style="display:inline;"
                                       onsubmit="return confirm('确定删除？（不可恢复）');">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill">删除</button>
                                 </form>
                             {% else %}
@@ -203,6 +207,7 @@
                                     <form action="{{ url_for('order_cancel', order_id=order.order_id) }}"
                                           method="POST" style="display:inline;"
                                           onsubmit="return confirm('确定取消该订单？');">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                         <button type="submit" class="btn btn-sm btn-outline-warning rounded-pill">取消</button>
                                     </form>
                                 {% endif %}
@@ -289,10 +294,18 @@ function batchSubmit(action) {
         return;
     }
 
+    const csrfToken = '{{ csrf_token() }}';
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = '/order/batch_action';
     form.style.display = 'none';
+
+    // CSRF token
+    const csrfInput = document.createElement('input');
+    csrfInput.type = 'hidden';
+    csrfInput.name = 'csrf_token';
+    csrfInput.value = csrfToken;
+    form.appendChild(csrfInput);
 
     const actionInput = document.createElement('input');
     actionInput.type = 'hidden';

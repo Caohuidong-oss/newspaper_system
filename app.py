@@ -5,12 +5,14 @@ from sqlalchemy import func
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from functools import wraps
+from flask_wtf.csrf import CSRFProtect
 import os
 
 app = Flask(__name__)
 app.config.from_object(Config)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # 禁用静态文件缓存
 db.init_app(app)
+csrf = CSRFProtect(app)
 
 # 让 HTML 响应不缓存，避免浏览器拿到老模板
 @app.after_request
@@ -125,7 +127,7 @@ def register():
         if not existing_user:
             new_subscriber = User(
                 username=username,
-                password=password,
+                password='',  # 密码已存于 LoginUser.password_hash，此处不再存明文
                 real_name=username,
                 phone='',
                 address=''

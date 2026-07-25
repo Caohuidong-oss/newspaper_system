@@ -83,6 +83,7 @@
                             <form action="{{ url_for('user_delete', user_id=user.user_id) }}" method="POST"
                                   style="display:inline;"
                                   onsubmit="return confirm('确定要删除该订户？');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill">🗑️ 删除</button>
                             </form>
                         {% else %}

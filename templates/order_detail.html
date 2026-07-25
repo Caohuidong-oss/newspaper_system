@@ -166,9 +166,9 @@
            class="btn btn-outline-info rounded-pill px-4">🖨️ 打印订单</a>
         {% if session.role == 'admin' %}
             {% if order.status == 1 %}
-                <form action="{{ url_for('order_confirm', order_id=order.order_id) }}" method="POST"
-                      onsubmit="return confirm('确定要确认该订单吗？');">
-                    <button type="submit" class="btn btn-success rounded-pill px-4">
+                        <form action="{{ url_for('order_confirm', order_id=order.order_id) }}" method="POST"
+                              onsubmit="return confirm('确定要确认该订单吗？');">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         ✅ 确认订单
                     </button>
                 </form>
@@ -178,17 +178,20 @@
             {% if order.status != 3 %}
                 <form action="{{ url_for('order_cancel', order_id=order.order_id) }}" method="POST"
                       onsubmit="return confirm('确定要取消该订单吗？');">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button type="submit" class="btn btn-outline-warning rounded-pill px-4">❌ 取消订单</button>
                 </form>
             {% endif %}
             <form action="{{ url_for('order_delete', order_id=order.order_id) }}" method="POST"
                   onsubmit="return confirm('确定要删除该订单吗？（不可恢复）');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button type="submit" class="btn btn-outline-danger rounded-pill px-4">🗑️ 删除订单</button>
             </form>
         {% else %}
             {% if order.status == 1 %}
                 <form action="{{ url_for('order_cancel', order_id=order.order_id) }}" method="POST"
                       onsubmit="return confirm('确定要取消该订单吗？');">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button type="submit" class="btn btn-outline-warning rounded-pill px-4">❌ 取消我的订单</button>
                 </form>
             {% endif %}
