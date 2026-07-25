@@ -8,6 +8,29 @@
     <style>
         body { padding-top: 60px; background: #f5f7fa; }
         .container { margin-top: 20px; }
+
+        /* ========== 手机端优化 ========== */
+        @media (max-width: 576px) {
+            body { padding-top: 56px; }
+            .container { margin-top: 10px; padding-left: 12px; padding-right: 12px; }
+            h2 { font-size: 1.3rem; }
+            .card-body.p-5 { padding: 1.5rem !important; }
+            .display-5 { font-size: 1.6rem; }
+            .stat-card .stat-value { font-size: 1.3rem; }
+            .stat-card .stat-label { font-size: .7rem; }
+            .hero-emoji { display: none !important; }
+            /* 手机端表格横向滚动 */
+            .table-responsive-mobile { display: block; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            /* 按钮全宽 */
+            .btn-block-mobile { width: 100%; }
+            /* 面包屑减字号 */
+            .breadcrumb { font-size: .8rem; }
+            /* 订单卡片紧凑 */
+            .card-body.p-3 { padding: 0.8rem !important; }
+            /* 隐藏部分次要信息 */
+            .hide-mobile { display: none !important; }
+        }
+
         .role-badge {
             font-size: 0.75rem;
             padding: 2px 8px;
