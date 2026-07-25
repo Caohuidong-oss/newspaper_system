@@ -154,6 +154,7 @@ def profile():
         username = session.get('username')
         subscriber = User(
             username=username,
+            password='N/A',  # 占位密码：admin 用户用 LoginUser 登录，此字段不会被使用
             real_name=username,
             phone='',
             address=''
