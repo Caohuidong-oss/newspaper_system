@@ -1,0 +1,65 @@
+<view class="detail-container">
+  <view wx:if="{{loading}}" class="loading-text">加载中...</view>
+
+  <block wx:else>
+    <!-- 订单状态 -->
+    <view class="card status-card">
+      <text class="badge {{getStatusClass(order?.status)}} status-badge">{{getStatusText(order?.status)}}</text>
+      <text class="order-number">订单号：{{order?.orderNo || '#' + order?.id}}</text>
+      <text class="order-date">{{order?.createdAt}}</text>
+    </view>
+
+    <!-- 订户信息 -->
+    <view class="card">
+      <view class="card-header">订户信息</view>
+      <view class="info-row">
+        <text class="info-label">用户名</text>
+        <text class="info-value">{{order?.username || order?.userName || '未知'}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">姓名</text>
+        <text class="info-value">{{order?.subscriberName || '-'}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">电话</text>
+        <text class="info-value">{{order?.subscriberPhone || '-'}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">地址</text>
+        <text class="info-value">{{order?.subscriberAddress || '-'}}</text>
+      </view>
+    </view>
+
+    <!-- 订单明细 -->
+    <view class="card">
+      <view class="card-header">订单明细</view>
+      <view class="items-list">
+        <view class="item-row" wx:for="{{order?.items || []}}" wx:key="newspaperId">
+          <text class="item-name">{{item.newspaperName || item.name}}</text>
+          <view class="item-right">
+            <text class="item-qty">x{{item.quantity}}</text>
+            <text class="item-price">¥{{item.subtotal || item.price}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="total-row">
+        <text class="total-label">合计</text>
+        <text class="total-amount">¥{{order?.totalAmount}}</text>
+      </view>
+    </view>
+
+    <!-- 备注 -->
+    <view class="card" wx:if="{{order?.remark}}">
+      <view class="card-header">备注</view>
+      <text class="remark-text">{{order.remark}}</text>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="action-bar">
+      <button wx:if="{{isAdmin && order?.status === 'pending'}}" class="btn-primary action-btn" bindtap="onConfirm">确认订单</button>
+      <button wx:if="{{isAdmin && order?.status === 'pending'}}" class="btn-danger action-btn" bindtap="onCancel">取消订单</button>
+      <button wx:if="{{!isAdmin && order?.status === 'pending'}}" class="btn-danger action-btn" bindtap="onCancel">取消订单</button>
+      <button wx:if="{{isAdmin}}" class="action-btn btn-secondary" bindtap="onDelete">删除订单</button>
+    </view>
+  </block>
+</view>

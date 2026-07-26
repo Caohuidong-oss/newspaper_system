@@ -1,0 +1,86 @@
+/* 全局样式 */
+page {
+  background: #f5f7fa;
+  font-size: 28rpx;
+  color: #333;
+  box-sizing: border-box;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,.06);
+}
+
+.card-header {
+  font-weight: 700;
+  font-size: 30rpx;
+  margin-bottom: 20rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  border-radius: 40rpx;
+  padding: 24rpx 40rpx;
+  text-align: center;
+  font-size: 28rpx;
+  font-weight: 600;
+  border: none;
+}
+
+.btn-primary:active {
+  opacity: .85;
+}
+
+.btn-danger {
+  background: #ff4757;
+  color: #fff;
+  border-radius: 40rpx;
+  padding: 20rpx 36rpx;
+  text-align: center;
+  font-size: 26rpx;
+  border: none;
+}
+
+.stat-card {
+  border-radius: 16rpx;
+  padding: 24rpx;
+  color: #fff;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 44rpx;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: 22rpx;
+  opacity: .8;
+  margin-top: 6rpx;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.badge-pending { background: #fff3cd; color: #856404; }
+.badge-confirmed { background: #d4edda; color: #155724; }
+.badge-cancelled { background: #f8d7da; color: #721c24; }
+.badge-admin { background: #dc3545; color: #fff; }
+.badge-user { background: #0d6efd; color: #fff; }
+
+.gradient-purple { background: linear-gradient(135deg, #667eea, #764ba2); }
+.gradient-green { background: linear-gradient(135deg, #11998e, #38ef7d); }
+.gradient-pink { background: linear-gradient(135deg, #f093fb, #f5576c); }
+.gradient-blue { background: linear-gradient(135deg, #4facfe, #00f2fe); }

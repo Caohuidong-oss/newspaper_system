@@ -1,0 +1,51 @@
+{
+  "pages": [
+    "pages/login/login",
+    "pages/index/index",
+    "pages/newspapers/newspapers",
+    "pages/orders/orders",
+    "pages/order-detail/order-detail",
+    "pages/order-create/order-create",
+    "pages/profile/profile",
+    "pages/statistics/statistics"
+  ],
+  "window": {
+    "navigationBarTitleText": "报刊订阅系统",
+    "navigationBarBackgroundColor": "#667eea",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f5f7fa"
+  },
+  "tabBar": {
+    "color": "#999",
+    "selectedColor": "#667eea",
+    "backgroundColor": "#fff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "iconPath": "images/home.png",
+        "selectedIconPath": "images/home-active.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/newspapers/newspapers",
+        "iconPath": "images/newspaper.png",
+        "selectedIconPath": "images/newspaper-active.png",
+        "text": "报刊"
+      },
+      {
+        "pagePath": "pages/orders/orders",
+        "iconPath": "images/order.png",
+        "selectedIconPath": "images/order-active.png",
+        "text": "订单"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "iconPath": "images/profile.png",
+        "selectedIconPath": "images/profile-active.png",
+        "text": "我的"
+      }
+    ]
+  },
+  "sitemapLocation": "sitemap.json"
+}

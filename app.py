@@ -7,12 +7,14 @@ from werkzeug.utils import secure_filename
 from functools import wraps
 from flask_wtf.csrf import CSRFProtect
 import os
+from api import api
 
 app = Flask(__name__)
 app.config.from_object(Config)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # 禁用静态文件缓存
 db.init_app(app)
 csrf = CSRFProtect(app)
+app.register_blueprint(api)
 
 # 让 HTML 响应不缓存，避免浏览器拿到老模板
 @app.after_request

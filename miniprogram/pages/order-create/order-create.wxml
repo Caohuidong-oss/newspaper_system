@@ -1,0 +1,51 @@
+<view class="create-container">
+  <!-- 管理员选用户 -->
+  <view class="card" wx:if="{{isAdmin}}">
+    <view class="card-header">选择订户</view>
+    <picker class="user-picker" bindchange="onUserSelect" value="{{selectedUserId}}" range="{{users}}" range-key="username">
+      <view class="picker-display">
+        <text wx:if="{{selectedUserId}}">{{users.find(u => u.id == selectedUserId)?.username || '已选择'}}</text>
+        <text wx:else class="picker-placeholder">请选择订户</text>
+        <text class="picker-arrow">></text>
+      </view>
+    </picker>
+  </view>
+
+  <!-- 报刊列表 -->
+  <view class="card">
+    <view class="card-header">选择报刊</view>
+    <view wx:if="{{loading}}" class="loading-text">加载中...</view>
+    <view wx:else class="newspaper-list">
+      <view class="newspaper-item {{selectedNewspaper?.id === item.id ? 'item-selected' : ''}}" wx:for="{{newspapers}}" wx:key="id" data-id="{{item.id}}" bindtap="selectNewspaper">
+        <view class="item-info">
+          <text class="item-name">{{item.name}}</text>
+          <text class="item-price">¥{{item.price}}/期</text>
+        </view>
+        <view class="qty-stepper">
+          <view class="stepper-btn" data-id="{{item.id}}" data-delta="-1" bindtap="onQtyChange">-</view>
+          <text class="stepper-value">{{quantities[item.id] || 0}}</text>
+          <view class="stepper-btn" data-id="{{item.id}}" data-delta="1" bindtap="onQtyChange">+</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 合计 -->
+  <view class="card total-card">
+    <view class="total-row">
+      <text class="total-label">合计</text>
+      <text class="total-amount">¥{{getTotal()}}</text>
+    </view>
+  </view>
+
+  <!-- 备注 -->
+  <view class="card">
+    <view class="card-header">备注</view>
+    <textarea class="remark-input" placeholder="选填：添加备注信息..." value="{{remark}}" bindinput="onRemarkInput" />
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="submit-bar">
+    <button class="btn-primary submit-btn" bindtap="onSubmit" loading="{{submitting}}" disabled="{{submitting}}">提交订单</button>
+  </view>
+</view>

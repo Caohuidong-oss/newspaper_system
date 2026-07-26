@@ -1,0 +1,122 @@
+.profile-container {
+  padding-bottom: 40rpx;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  margin-top: 20rpx;
+}
+
+.avatar {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  font-size: 40rpx;
+  font-weight: 700;
+  text-align: center;
+  line-height: 100rpx;
+  flex-shrink: 0;
+}
+
+.profile-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.profile-username {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #333;
+}
+
+.profile-role {
+  align-self: flex-start;
+}
+
+.edit-btn {
+  flex-shrink: 0;
+  background: #f0f0ff;
+  color: #667eea;
+  border-radius: 30rpx;
+  padding: 12rpx 28rpx;
+  font-size: 24rpx;
+  border: none;
+}
+
+.edit-btn:active {
+  opacity: .7;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  width: 100rpx;
+  font-size: 26rpx;
+  color: #999;
+  flex-shrink: 0;
+}
+
+.info-input {
+  flex: 1;
+  font-size: 26rpx;
+  color: #333;
+  padding: 8rpx 0;
+}
+
+.info-input[disabled] {
+  color: #666;
+  background: transparent;
+}
+
+.save-btn {
+  width: 100%;
+  margin-top: 20rpx;
+  height: 76rpx;
+  line-height: 76rpx;
+  font-size: 28rpx;
+}
+
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 0;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.menu-item:active {
+  opacity: .7;
+}
+
+.menu-arrow {
+  color: #ccc;
+  font-size: 28rpx;
+}
+
+.logout-bar {
+  padding: 20rpx;
+  margin-top: 20rpx;
+}
+
+.logout-btn {
+  width: 100%;
+  height: 80rpx;
+  line-height: 80rpx;
+  font-size: 28rpx;
+}

@@ -1,0 +1,88 @@
+.orders-container {
+  padding-bottom: 20rpx;
+}
+
+.tabs {
+  display: flex;
+  background: #fff;
+  padding: 0 20rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  font-size: 26rpx;
+  color: #666;
+  position: relative;
+}
+
+.tab-active {
+  color: #667eea;
+  font-weight: 600;
+}
+
+.tab-active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40rpx;
+  height: 4rpx;
+  background: #667eea;
+  border-radius: 2rpx;
+}
+
+.order-list {
+  padding: 0 10rpx;
+}
+
+.order-card {
+  margin: 10rpx 0;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.order-id {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.order-body {
+  display: flex;
+  justify-content: space-between;
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 16rpx;
+}
+
+.order-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.order-total {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.order-amount {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #e74c3c;
+}
+
+.loading-text, .empty-text {
+  text-align: center;
+  padding: 80rpx 0;
+  color: #999;
+  font-size: 28rpx;
+}

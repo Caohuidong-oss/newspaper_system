@@ -1,0 +1,31 @@
+<view class="orders-container">
+  <!-- 状态标签 -->
+  <view class="tabs">
+    <view class="tab {{activeTab === index ? 'tab-active' : ''}}" wx:for="{{tabs}}" wx:key="key" data-index="{{index}}" bindtap="onTabTap">
+      <text>{{item.label}}</text>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-text">加载中...</view>
+
+  <!-- 空状态 -->
+  <view wx:elif="{{orders.length === 0}}" class="empty-text">暂无订单</view>
+
+  <!-- 订单列表 -->
+  <view wx:else class="order-list">
+    <view class="order-card card" wx:for="{{orders}}" wx:key="id" data-id="{{item.id}}" bindtap="goToDetail">
+      <view class="order-header">
+        <text class="order-id">订单 #{{item.id}}</text>
+        <text class="badge {{getStatusClass(item.status)}}">{{getStatusText(item.status)}}</text>
+      </view>
+      <view class="order-body">
+        <text class="order-user">订户：{{item.username || item.userName || '未知'}}</text>
+        <text class="order-date">{{item.createdAt?.substring(0, 10) || item.createdAt}}</text>
+      </view>
+      <view class="order-footer">
+        <text class="order-total">合计：<text class="order-amount">¥{{item.totalAmount}}</text></text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,63 @@
+<view class="stats-container">
+  <view wx:if="{{loading}}" class="loading-text">加载中...</view>
+
+  <block wx:else>
+    <!-- 统计卡片 -->
+    <view class="stats-grid">
+      <view class="stats-item">
+        <view class="stat-card gradient-purple">
+          <view class="stat-value">{{stats?.orderCount ?? '-'}}</view>
+          <view class="stat-label">总订阅数</view>
+        </view>
+      </view>
+      <view class="stats-item">
+        <view class="stat-card gradient-green">
+          <view class="stat-value">¥{{stats?.revenue ?? '0'}}</view>
+          <view class="stat-label">总收入</view>
+        </view>
+      </view>
+      <view class="stats-item">
+        <view class="stat-card gradient-pink">
+          <view class="stat-value">{{stats?.userCount ?? '-'}}</view>
+          <view class="stat-label">用户数</view>
+        </view>
+      </view>
+      <view class="stats-item">
+        <view class="stat-card gradient-blue">
+          <view class="stat-value">{{stats?.newspaperCount ?? '-'}}</view>
+          <view class="stat-label">报刊数</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 热门报刊排行 -->
+    <view class="card">
+      <view class="card-header">热门报刊 TOP5</view>
+      <view wx:if="{{topNewspapers.length === 0}}" class="empty-text">暂无数据</view>
+      <view wx:else class="rank-list">
+        <view class="rank-item" wx:for="{{topNewspapers}}" wx:key="id">
+          <view class="rank-num {{index < 3 ? 'rank-top' : ''}}">{{index + 1}}</view>
+          <text class="rank-name">{{item.name || item.newspaperName}}</text>
+          <text class="rank-count">{{item.count || item.orderCount}} 单</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 报刊类型分布 -->
+    <view class="card">
+      <view class="card-header">报刊类型分布</view>
+      <view wx:if="{{typeDistribution.length === 0}}" class="empty-text">暂无数据</view>
+      <view wx:else class="dist-list">
+        <view class="dist-item" wx:for="{{typeDistribution}}" wx:key="type">
+          <view class="dist-header">
+            <text class="dist-type">{{item.type || '综合'}}</text>
+            <text class="dist-count">{{item.count}} 种</text>
+          </view>
+          <view class="dist-bar-bg">
+            <view class="dist-bar-fill" style="width: {{getTypePercent(item.type)}}%"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+</view>

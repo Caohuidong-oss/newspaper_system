@@ -1,0 +1,94 @@
+.index-container {
+  padding-bottom: 20rpx;
+}
+
+.welcome-banner {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  padding: 40rpx 30rpx;
+  color: #fff;
+}
+
+.welcome-text {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.welcome-greeting {
+  font-size: 34rpx;
+  font-weight: 700;
+}
+
+.welcome-role {
+  font-size: 20rpx;
+}
+
+.welcome-desc {
+  font-size: 24rpx;
+  opacity: .8;
+  margin-top: 10rpx;
+}
+
+.stats-grid {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 20rpx 10rpx;
+}
+
+.stats-item {
+  width: 50%;
+  padding: 10rpx;
+  box-sizing: border-box;
+}
+
+.order-list {
+  margin-top: 10rpx;
+}
+
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+
+.order-item:last-child {
+  border-bottom: none;
+}
+
+.order-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.order-id {
+  font-size: 26rpx;
+  color: #333;
+  font-weight: 600;
+}
+
+.order-date {
+  font-size: 22rpx;
+  color: #999;
+}
+
+.order-meta {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.order-amount {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #e74c3c;
+}
+
+.loading-text, .empty-text {
+  text-align: center;
+  padding: 40rpx 0;
+  color: #999;
+  font-size: 26rpx;
+}
