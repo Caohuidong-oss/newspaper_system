@@ -53,7 +53,7 @@ Page({
         this.setData({ order, loading: false });
       })
       .catch(err => {
-        wx.showToast({ title: err.message || '加载失�¥', icon: 'none' });
+        wx.showToast({ title: err.message || '加载失败', icon: 'none' });
         this.setData({ loading: false });
       });
   },
@@ -62,7 +62,7 @@ Page({
     const id = this.data.order.order_id;
     wx.showModal({
       title: '确认订单',
-      content: '确定要确认�¥订单吗？',
+      content: '确定要确认该订单吗？',
       success: (res) => {
         if (res.confirm) {
           api.confirmOrder(id)
@@ -71,7 +71,7 @@ Page({
               this.loadDetail(id);
             })
             .catch(err => {
-              wx.showToast({ title: err.message || '操作失�¥', icon: 'none' });
+              wx.showToast({ title: err.message || '操作失败', icon: 'none' });
             });
         }
       },
@@ -82,7 +82,7 @@ Page({
     const id = this.data.order.order_id;
     wx.showModal({
       title: '取消订单',
-      content: '确定要取消�¥订单吗？',
+      content: '确定要取消该订单吗？',
       success: (res) => {
         if (res.confirm) {
           api.cancelOrder(id)
@@ -91,7 +91,7 @@ Page({
               this.loadDetail(id);
             })
             .catch(err => {
-              wx.showToast({ title: err.message || '操作失�¥', icon: 'none' });
+              wx.showToast({ title: err.message || '操作失败', icon: 'none' });
             });
         }
       },
@@ -102,7 +102,7 @@ Page({
     const id = this.data.order.order_id;
     wx.showModal({
       title: '删除订单',
-      content: '确定要删除�¥订单吗？此操作不可撤销。',
+      content: '确定要删除该订单吗？此操作不可撤销。',
       success: (res) => {
         if (res.confirm) {
           api.cancelOrder(id)
@@ -111,7 +111,7 @@ Page({
               setTimeout(() => wx.navigateBack(), 500);
             })
             .catch(err => {
-              wx.showToast({ title: err.message || '操作失�¥', icon: 'none' });
+              wx.showToast({ title: err.message || '操作失败', icon: 'none' });
             });
         }
       },

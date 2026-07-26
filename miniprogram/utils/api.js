@@ -28,11 +28,11 @@ function request(path, options = {}) {
           wx.redirectTo({ url: '/pages/login/login' });
           reject(new Error(data.msg));
         } else {
-          reject(new Error(data.msg || '请求失�¥'));
+          reject(new Error(data.msg || '请求失败'));
         }
       },
       fail(err) {
-        reject(new Error('网络错误，请检�¥网络连�¥'));
+        reject(new Error('网络错误，请检查网络连接'));
       }
     });
   });
@@ -45,7 +45,7 @@ module.exports = {
 
   getProfile: () => request('/auth/profile'),
 
-  // ── �¥刊 ──
+  // ── 报刊 ──
   getNewspapers: (keyword = '') =>
     request(`/newspapers?keyword=${encodeURIComponent(keyword)}`),
 

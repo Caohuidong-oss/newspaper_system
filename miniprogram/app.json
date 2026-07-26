@@ -10,7 +10,7 @@
     "pages/statistics/statistics"
   ],
   "window": {
-    "navigationBarTitleText": "�¥刊订阅系统",
+    "navigationBarTitleText": "报刊订阅系统",
     "navigationBarBackgroundColor": "#667eea",
     "navigationBarTextStyle": "white",
     "backgroundColor": "#f5f7fa"
@@ -31,7 +31,7 @@
         "pagePath": "pages/newspapers/newspapers",
         "iconPath": "images/newspaper.png",
         "selectedIconPath": "images/newspaper-active.png",
-        "text": "�¥刊"
+        "text": "报刊"
       },
       {
         "pagePath": "pages/orders/orders",

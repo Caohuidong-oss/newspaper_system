@@ -11,9 +11,9 @@
     </picker>
   </view>
 
-  <!-- �¥刊列表 -->
+  <!-- 报刊列表 -->
   <view class="card">
-    <view class="card-header">选择�¥刊</view>
+    <view class="card-header">选择报刊</view>
     <view wx:if="{{loading}}" class="loading-text">加载中...</view>
     <view wx:else class="newspaper-list">
       <view class="newspaper-item {{quantities[item.id] > 0 ? 'item-selected' : ''}}"

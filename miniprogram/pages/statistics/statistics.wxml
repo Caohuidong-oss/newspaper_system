@@ -12,7 +12,7 @@
       <view class="stats-item">
         <view class="stat-card gradient-green">
           <view class="stat-value">?{{stats.revenue}}</view>
-          <view class="stat-label">总收�¥</view>
+          <view class="stat-label">总收入</view>
         </view>
       </view>
       <view class="stats-item">
@@ -24,14 +24,14 @@
       <view class="stats-item">
         <view class="stat-card gradient-blue">
           <view class="stat-value">{{stats.newspaperCount}}</view>
-          <view class="stat-label">�¥刊数</view>
+          <view class="stat-label">报刊数</view>
         </view>
       </view>
     </view>
 
-    <!-- 热门�¥刊排行 -->
+    <!-- 热门报刊排行 -->
     <view class="card">
-      <view class="card-header">热门�¥刊 TOP5</view>
+      <view class="card-header">热门报刊 TOP5</view>
       <view wx:if="{{topNewspapers.length === 0}}" class="empty-text">暂无数据</view>
       <view wx:else class="rank-list">
         <view class="rank-item" wx:for="{{topNewspapers}}" wx:key="id">
@@ -42,9 +42,9 @@
       </view>
     </view>
 
-    <!-- �¥刊类型分布 -->
+    <!-- 报刊类型分布 -->
     <view class="card">
-      <view class="card-header">�¥刊类型分布</view>
+      <view class="card-header">报刊类型分布</view>
       <view wx:if="{{typeDistribution.length === 0}}" class="empty-text">暂无数据</view>
       <view wx:else class="dist-list">
         <view class="dist-item" wx:for="{{typeDistribution}}" wx:key="type">

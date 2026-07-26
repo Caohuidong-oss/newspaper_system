@@ -23,7 +23,7 @@
         <text class="badge {{item.statusClass}}">{{item.statusText}}</text>
       </view>
       <view class="order-body">
-        <text class="order-user">订户：{{item.user_name || item.username || '未�¥'}}</text>
+        <text class="order-user">订户：{{item.user_name || item.username || '未知'}}</text>
         <text class="order-date">{{item.dateShort}}</text>
       </view>
       <view class="order-footer">
