@@ -1,65 +1,55 @@
-<view class="detail-container">
-  <view wx:if="{{loading}}" class="loading-text">åŠ è½½ä¸­...</view>
+<view class="order-detail-container">
+  <view wx:if="{{loading}}" class="loading-text">¼ÓÔØÖĞ...</view>
 
   <block wx:else>
-    <!-- è®¢å•çŠ¶æ€ -->
-    <view class="card status-card">
-      <text class="badge {{getStatusClass(order?.status)}} status-badge">{{getStatusText(order?.status)}}</text>
-      <text class="order-number">è®¢å•å·ï¼š{{order?.orderNo || '#' + order?.id}}</text>
-      <text class="order-date">{{order?.createdAt}}</text>
+    <!-- Í·²¿×´Ì¬ -->
+    <view class="status-header card">
+      <text class="badge {{order.statusClass}} status-badge">{{order.statusText}}</text>
+      <text class="order-number">¶©µ¥ºÅ #{{order.order_id}}</text>
+      <text class="order-date">{{order.order_date}}</text>
     </view>
 
-    <!-- è®¢æˆ·ä¿¡æ¯ -->
+    <!-- ¶©»§ĞÅÏ¢ -->
     <view class="card">
-      <view class="card-header">è®¢æˆ·ä¿¡æ¯</view>
+      <view class="card-header">¶©»§ĞÅÏ¢</view>
       <view class="info-row">
-        <text class="info-label">ç”¨æˆ·å</text>
-        <text class="info-value">{{order?.username || order?.userName || 'æœªçŸ¥'}}</text>
+        <text class="info-label">ĞÕÃû</text>
+        <text class="info-value">{{order.user_name || 'Î´Öª'}}</text>
       </view>
       <view class="info-row">
-        <text class="info-label">å§“å</text>
-        <text class="info-value">{{order?.subscriberName || '-'}}</text>
-      </view>
-      <view class="info-row">
-        <text class="info-label">ç”µè¯</text>
-        <text class="info-value">{{order?.subscriberPhone || '-'}}</text>
-      </view>
-      <view class="info-row">
-        <text class="info-label">åœ°å€</text>
-        <text class="info-value">{{order?.subscriberAddress || '-'}}</text>
+        <text class="info-label">µç»°</text>
+        <text class="info-value">{{order.user_phone || '-'}}</text>
       </view>
     </view>
 
-    <!-- è®¢å•æ˜ç»† -->
+    <!-- ÉÌÆ·Ã÷Ï¸ -->
     <view class="card">
-      <view class="card-header">è®¢å•æ˜ç»†</view>
-      <view class="items-list">
-        <view class="item-row" wx:for="{{order?.items || []}}" wx:key="newspaperId">
-          <text class="item-name">{{item.newspaperName || item.name}}</text>
-          <view class="item-right">
-            <text class="item-qty">x{{item.quantity}}</text>
-            <text class="item-price">Â¥{{item.subtotal || item.price}}</text>
-          </view>
+      <view class="card-header">¶©ÔÄÃ÷Ï¸</view>
+      <view wx:if="{{order.subscriptions.length === 0}}" class="empty-text">ÔİÎŞÃ÷Ï¸</view>
+      <view wx:else>
+        <view class="item-row" wx:for="{{order.subscriptions}}" wx:key="newspaper_id">
+          <text class="item-name">{{item.newspaper_name}}</text>
+          <text class="item-qty">x {{item.quantity}}</text>
+          <text class="item-amount">?{{item.subtotal}}</text>
         </view>
       </view>
-      <view class="total-row">
-        <text class="total-label">åˆè®¡</text>
-        <text class="total-amount">Â¥{{order?.totalAmount}}</text>
+
+      <view class="total-row" wx:if="{{order.subscriptions.length > 0}}">
+        <text class="total-label">ºÏ¼Æ</text>
+        <text class="total-amount">?{{order.total_amount}}</text>
       </view>
     </view>
 
-    <!-- å¤‡æ³¨ -->
-    <view class="card" wx:if="{{order?.remark}}">
-      <view class="card-header">å¤‡æ³¨</view>
-      <text class="remark-text">{{order.remark}}</text>
+    <!-- ±¸×¢ -->
+    <view class="card" wx:if="{{order.note}}">
+      <view class="card-header">±¸×¢</view>
+      <text class="note-text">{{order.note}}</text>
     </view>
 
-    <!-- æ“ä½œæŒ‰é’® -->
+    <!-- ²Ù×÷°´Å¥ -->
     <view class="action-bar">
-      <button wx:if="{{isAdmin && order?.status === 'pending'}}" class="btn-primary action-btn" bindtap="onConfirm">ç¡®è®¤è®¢å•</button>
-      <button wx:if="{{isAdmin && order?.status === 'pending'}}" class="btn-danger action-btn" bindtap="onCancel">å–æ¶ˆè®¢å•</button>
-      <button wx:if="{{!isAdmin && order?.status === 'pending'}}" class="btn-danger action-btn" bindtap="onCancel">å–æ¶ˆè®¢å•</button>
-      <button wx:if="{{isAdmin}}" class="action-btn btn-secondary" bindtap="onDelete">åˆ é™¤è®¢å•</button>
+      <button wx:if="{{isAdmin && order.status === 1}}" class="btn-confirm" bindtap="onConfirm">È·ÈÏ¶©µ¥</button>
+      <button wx:if="{{order.status === 1}}" class="btn-cancel" bindtap="onCancel">È¡Ïû¶©µ¥</button>
     </view>
   </block>
 </view>

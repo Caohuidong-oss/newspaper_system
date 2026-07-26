@@ -2,41 +2,51 @@ const api = require('../../utils/api');
 
 Page({
   data: {
-    stats: null,
+    stats: {
+      orderCount: 0,
+      revenue: '0.00',
+      userCount: 0,
+      newspaperCount: 0,
+    },
     topNewspapers: [],
     typeDistribution: [],
     loading: true,
   },
 
-  onLoad() {
-    this.loadStats();
+  onShow() {
+    this.loadData();
   },
 
-  loadStats() {
+  loadData() {
     this.setData({ loading: true });
     api.getStats()
       .then(res => {
+        const total = (res.total_users || 0) + (res.total_newspapers || 0) || 1;
+        // 报刊类型分布（如果有的话）
+        const typeDist = (res.type_stats || []).map(t => ({
+          type: t.type || '其他',
+          count: t.count || 0,
+          percent: Math.round((t.count / Math.max(res.total_subscriptions || 1, 1)) * 100),
+        }));
         this.setData({
-          stats: res,
-          topNewspapers: res.topNewspapers || [],
-          typeDistribution: res.typeDistribution || [],
+          stats: {
+            orderCount: res.total_subscriptions || 0,
+            revenue: Number(res.total_revenue || 0).toFixed(2),
+            userCount: res.total_users || 0,
+            newspaperCount: res.total_newspapers || 0,
+          },
+          topNewspapers: (res.top_newspapers || []).map(n => ({
+            id: n.name,
+            name: n.name,
+            count: n.count,
+          })),
+          typeDistribution: typeDist,
+          loading: false,
         });
       })
       .catch(err => {
         wx.showToast({ title: err.message || '加载失败', icon: 'none' });
-      })
-      .finally(() => {
         this.setData({ loading: false });
       });
-  },
-
-  getTypePercent(type) {
-    const total = this.data.stats?.newspaperCount || 1;
-    const count = this.data.typeDistribution.find(t => t.type === type)?.count || 0;
-    return (count / total * 100).toFixed(1);
-  },
-
-  getTypeCount(type) {
-    return this.data.typeDistribution.find(t => t.type === type)?.count || 0;
   },
 });

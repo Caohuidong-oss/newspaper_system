@@ -1,8 +1,22 @@
 const api = require('../../utils/api');
 
+const STATUS_TEXT = { 1: '待处理', 2: '已确认', 3: '已取消' };
+const STATUS_CLASS = { 1: 'badge-pending', 2: 'badge-confirmed', 3: 'badge-cancelled' };
+
 Page({
   data: {
-    order: null,
+    order: {
+      order_id: 0,
+      user_name: '',
+      user_phone: '',
+      order_date: '',
+      total_amount: '0.00',
+      status: 1,
+      statusText: '',
+      statusClass: '',
+      note: '',
+      subscriptions: [],
+    },
     isAdmin: false,
     loading: true,
   },
@@ -23,28 +37,29 @@ Page({
     this.setData({ loading: true });
     api.getOrderDetail(id)
       .then(res => {
-        this.setData({ order: res });
+        const o = res.order || res;
+        const order = {
+          order_id: o.order_id || id,
+          user_name: o.user_name || '-',
+          user_phone: o.user_phone || '-',
+          order_date: o.order_date || '',
+          total_amount: Number(o.total_amount || 0).toFixed(2),
+          status: o.status || 1,
+          statusText: STATUS_TEXT[o.status] || '',
+          statusClass: STATUS_CLASS[o.status] || '',
+          note: o.note || '',
+          subscriptions: o.subscriptions || [],
+        };
+        this.setData({ order, loading: false });
       })
       .catch(err => {
         wx.showToast({ title: err.message || '加载失败', icon: 'none' });
-      })
-      .finally(() => {
         this.setData({ loading: false });
       });
   },
 
-  getStatusText(status) {
-    const map = { pending: '待处理', confirmed: '已确认', cancelled: '已取消' };
-    return map[status] || status;
-  },
-
-  getStatusClass(status) {
-    const map = { pending: 'badge-pending', confirmed: 'badge-confirmed', cancelled: 'badge-cancelled' };
-    return map[status] || '';
-  },
-
   onConfirm() {
-    const id = this.data.order.id;
+    const id = this.data.order.order_id;
     wx.showModal({
       title: '确认订单',
       content: '确定要确认该订单吗？',
@@ -64,7 +79,7 @@ Page({
   },
 
   onCancel() {
-    const id = this.data.order.id;
+    const id = this.data.order.order_id;
     wx.showModal({
       title: '取消订单',
       content: '确定要取消该订单吗？',
@@ -84,7 +99,7 @@ Page({
   },
 
   onDelete() {
-    const id = this.data.order.id;
+    const id = this.data.order.order_id;
     wx.showModal({
       title: '删除订单',
       content: '确定要删除该订单吗？此操作不可撤销。',

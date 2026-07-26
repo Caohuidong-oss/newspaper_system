@@ -1,60 +1,59 @@
 <view class="stats-container">
-  <view wx:if="{{loading}}" class="loading-text">åŠ è½½ä¸­...</view>
-
+  <view wx:if="{{loading}}" class="loading-text">¼ÓÔØÖĞ...</view>
   <block wx:else>
-    <!-- ç»Ÿè®¡å¡ç‰‡ -->
+    <!-- Í³¼Æ¿¨Æ¬ -->
     <view class="stats-grid">
       <view class="stats-item">
         <view class="stat-card gradient-purple">
-          <view class="stat-value">{{stats?.orderCount ?? '-'}}</view>
-          <view class="stat-label">æ€»è®¢é˜…æ•°</view>
+          <view class="stat-value">{{stats.orderCount}}</view>
+          <view class="stat-label">×Ü¶©ÔÄÊı</view>
         </view>
       </view>
       <view class="stats-item">
         <view class="stat-card gradient-green">
-          <view class="stat-value">Â¥{{stats?.revenue ?? '0'}}</view>
-          <view class="stat-label">æ€»æ”¶å…¥</view>
+          <view class="stat-value">?{{stats.revenue}}</view>
+          <view class="stat-label">×ÜÊÕÈë</view>
         </view>
       </view>
       <view class="stats-item">
         <view class="stat-card gradient-pink">
-          <view class="stat-value">{{stats?.userCount ?? '-'}}</view>
-          <view class="stat-label">ç”¨æˆ·æ•°</view>
+          <view class="stat-value">{{stats.userCount}}</view>
+          <view class="stat-label">ÓÃ»§Êı</view>
         </view>
       </view>
       <view class="stats-item">
         <view class="stat-card gradient-blue">
-          <view class="stat-value">{{stats?.newspaperCount ?? '-'}}</view>
-          <view class="stat-label">æŠ¥åˆŠæ•°</view>
+          <view class="stat-value">{{stats.newspaperCount}}</view>
+          <view class="stat-label">±¨¿¯Êı</view>
         </view>
       </view>
     </view>
 
-    <!-- çƒ­é—¨æŠ¥åˆŠæ’è¡Œ -->
+    <!-- ÈÈÃÅ±¨¿¯ÅÅĞĞ -->
     <view class="card">
-      <view class="card-header">çƒ­é—¨æŠ¥åˆŠ TOP5</view>
-      <view wx:if="{{topNewspapers.length === 0}}" class="empty-text">æš‚æ— æ•°æ®</view>
+      <view class="card-header">ÈÈÃÅ±¨¿¯ TOP5</view>
+      <view wx:if="{{topNewspapers.length === 0}}" class="empty-text">ÔİÎŞÊı¾İ</view>
       <view wx:else class="rank-list">
         <view class="rank-item" wx:for="{{topNewspapers}}" wx:key="id">
           <view class="rank-num {{index < 3 ? 'rank-top' : ''}}">{{index + 1}}</view>
-          <text class="rank-name">{{item.name || item.newspaperName}}</text>
-          <text class="rank-count">{{item.count || item.orderCount}} å•</text>
+          <text class="rank-name">{{item.name}}</text>
+          <text class="rank-count">{{item.count}} ·İ</text>
         </view>
       </view>
     </view>
 
-    <!-- æŠ¥åˆŠç±»å‹åˆ†å¸ƒ -->
+    <!-- ±¨¿¯ÀàĞÍ·Ö²¼ -->
     <view class="card">
-      <view class="card-header">æŠ¥åˆŠç±»å‹åˆ†å¸ƒ</view>
-      <view wx:if="{{typeDistribution.length === 0}}" class="empty-text">æš‚æ— æ•°æ®</view>
+      <view class="card-header">±¨¿¯ÀàĞÍ·Ö²¼</view>
+      <view wx:if="{{typeDistribution.length === 0}}" class="empty-text">ÔİÎŞÊı¾İ</view>
       <view wx:else class="dist-list">
         <view class="dist-item" wx:for="{{typeDistribution}}" wx:key="type">
           <view class="dist-header">
-            <text class="dist-type">{{item.type || 'ç»¼åˆ'}}</text>
-            <text class="dist-count">{{item.count}} ç§</text>
+            <text class="dist-type">{{item.type}}</text>
+            <text class="dist-count">{{item.count}} ·İ</text>
           </view>
-          <view class="dist-bar-bg">
-            <view class="dist-bar-fill" style="width: {{getTypePercent(item.type)}}%"></view>
+          <view class="dist-bar-wrap">
+            <view class="dist-bar" style="width: {{item.percent}}%"></view>
           </view>
         </view>
       </view>
