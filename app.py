@@ -148,6 +148,12 @@ def logout():
     flash('已退出登录', 'info')
     return redirect(url_for('index'))
 
+@app.route('/api_test')
+def api_test():
+    """API 测试页（开发用，方便调试 JWT）"""
+    return render_template('api_test.html')
+    return redirect(url_for('index'))
+
 # ==================== 个人中心 ====================
 @app.route('/profile', methods=['GET', 'POST'])
 @login_required

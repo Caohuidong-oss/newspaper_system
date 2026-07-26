@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}API 测试{% endblock %}
+{% block content %}
+<div class="card shadow-sm" style="max-width: 600px; margin: 0 auto;">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">🧪 API 测试页</h5>
+    </div>
+    <div class="card-body">
+        <p class="text-muted small">用这个页面快速测试 API 接口，模拟小程序发起的请求。</p>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">1️⃣ 登录获取 token</label>
+            <button class="btn btn-primary w-100" onclick="testLogin()">
+                🔑 用 admin / admin123 登录
+            </button>
+            <div id="loginResult" class="mt-2 small"></div>
+        </div>
+
+        <hr>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">2️⃣ 用 token 调接口</label>
+            <div class="d-grid gap-2">
+                <button class="btn btn-outline-primary" onclick="testNewspapers()">📰 获取报刊列表</button>
+                <button class="btn btn-outline-primary" onclick="testStats()">📊 获取统计数据</button>
+                <button class="btn btn-outline-primary" onclick="testOrders()">📦 获取订单列表</button>
+            </div>
+            <div id="apiResult" class="mt-2 small"></div>
+        </div>
+
+        <div class="alert alert-info small mb-0">
+            <strong>说明：</strong>登录成功后会获得一个 token，自动存到 localStorage，下次请求自动带。
+        </div>
+    </div>
+</div>
+
+<script>
+const API = 'https://web-production-8197.up.railway.app/api';
+
+function getToken() {
+    return localStorage.getItem('api_test_token');
+}
+
+function setResult(elId, html) {
+    document.getElementById(elId).innerHTML =
+        '<pre style="background:#f5f5f5; padding:10px; border-radius:4px; max-height:300px; overflow:auto; font-size:12px;">'
+        + html + '</pre>';
+}
+
+async function testLogin() {
+    try {
+        const r = await fetch(API + '/auth/dev_login', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({username: 'admin', password: 'admin123'})
+        });
+        const j = await r.json();
+        if (j.code === 0) {
+            localStorage.setItem('api_test_token', j.data.token);
+            setResult('loginResult', '✅ 登录成功\n\nToken 已保存到 localStorage\n\n' + JSON.stringify(j, null, 2));
+        } else {
+            setResult('loginResult', '❌ ' + j.msg);
+        }
+    } catch (e) {
+        setResult('loginResult', '❌ 请求失败：' + e.message);
+    }
+}
+
+async function authFetch(path) {
+    const token = getToken();
+    if (!token) {
+        return {code: 401, msg: '请先登录获取 token'};
+    }
+    const r = await fetch(API + path, {headers: {'Authorization': 'Bearer ' + token}});
+    return r.json();
+}
+
+async function testNewspapers() {
+    const j = await authFetch('/newspapers');
+    setResult('apiResult', JSON.stringify(j, null, 2));
+}
+
+async function testStats() {
+    const j = await authFetch('/stats');
+    setResult('apiResult', JSON.stringify(j, null, 2));
+}
+
+async function testOrders() {
+    const j = await authFetch('/orders');
+    setResult('apiResult', JSON.stringify(j, null, 2));
+}
+</script>
+{% endblock %}
