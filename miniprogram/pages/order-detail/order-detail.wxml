@@ -1,31 +1,31 @@
 <view class="order-detail-container">
-  <view wx:if="{{loading}}" class="loading-text">¼ÓÔØÖĞ...</view>
+  <view wx:if="{{loading}}" class="loading-text">åŠ è½½ä¸­...</view>
 
   <block wx:else>
-    <!-- Í·²¿×´Ì¬ -->
+    <!-- å¤´éƒ¨çŠ¶æ€ -->
     <view class="status-header card">
       <text class="badge {{order.statusClass}} status-badge">{{order.statusText}}</text>
-      <text class="order-number">¶©µ¥ºÅ #{{order.order_id}}</text>
+      <text class="order-number">è®¢å•å· #{{order.order_id}}</text>
       <text class="order-date">{{order.order_date}}</text>
     </view>
 
-    <!-- ¶©»§ĞÅÏ¢ -->
+    <!-- è®¢æˆ·ä¿¡æ¯ -->
     <view class="card">
-      <view class="card-header">¶©»§ĞÅÏ¢</view>
+      <view class="card-header">è®¢æˆ·ä¿¡æ¯</view>
       <view class="info-row">
-        <text class="info-label">ĞÕÃû</text>
-        <text class="info-value">{{order.user_name || 'Î´Öª'}}</text>
+        <text class="info-label">å§“å</text>
+        <text class="info-value">{{order.user_name || 'æœªçŸ¥'}}</text>
       </view>
       <view class="info-row">
-        <text class="info-label">µç»°</text>
+        <text class="info-label">ç”µè¯</text>
         <text class="info-value">{{order.user_phone || '-'}}</text>
       </view>
     </view>
 
-    <!-- ÉÌÆ·Ã÷Ï¸ -->
+    <!-- å•†å“æ˜ç»† -->
     <view class="card">
-      <view class="card-header">¶©ÔÄÃ÷Ï¸</view>
-      <view wx:if="{{order.subscriptions.length === 0}}" class="empty-text">ÔİÎŞÃ÷Ï¸</view>
+      <view class="card-header">è®¢é˜…æ˜ç»†</view>
+      <view wx:if="{{order.subscriptions.length === 0}}" class="empty-text">æš‚æ— æ˜ç»†</view>
       <view wx:else>
         <view class="item-row" wx:for="{{order.subscriptions}}" wx:key="newspaper_id">
           <text class="item-name">{{item.newspaper_name}}</text>
@@ -35,21 +35,21 @@
       </view>
 
       <view class="total-row" wx:if="{{order.subscriptions.length > 0}}">
-        <text class="total-label">ºÏ¼Æ</text>
+        <text class="total-label">åˆè®¡</text>
         <text class="total-amount">?{{order.total_amount}}</text>
       </view>
     </view>
 
-    <!-- ±¸×¢ -->
+    <!-- å¤‡æ³¨ -->
     <view class="card" wx:if="{{order.note}}">
-      <view class="card-header">±¸×¢</view>
+      <view class="card-header">å¤‡æ³¨</view>
       <text class="note-text">{{order.note}}</text>
     </view>
 
-    <!-- ²Ù×÷°´Å¥ -->
+    <!-- æ“ä½œæŒ‰é’® -->
     <view class="action-bar">
-      <button wx:if="{{isAdmin && order.status === 1}}" class="btn-confirm" bindtap="onConfirm">È·ÈÏ¶©µ¥</button>
-      <button wx:if="{{order.status === 1}}" class="btn-cancel" bindtap="onCancel">È¡Ïû¶©µ¥</button>
+      <button wx:if="{{isAdmin && order.status === 1}}" class="btn-confirm" bindtap="onConfirm">ç¡®è®¤è®¢å•</button>
+      <button wx:if="{{order.status === 1}}" class="btn-cancel" bindtap="onCancel">å–æ¶ˆè®¢å•</button>
     </view>
   </block>
 </view>

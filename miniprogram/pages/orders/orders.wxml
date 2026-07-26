@@ -1,5 +1,5 @@
 <view class="orders-container">
-  <!-- ×´Ì¬±êÇ© -->
+  <!-- çŠ¶æ€æ ‡ç­¾ -->
   <view class="tabs">
     <view class="tab {{activeTab === index ? 'tab-active' : ''}}"
           wx:for="{{tabs}}" wx:key="key"
@@ -8,22 +8,22 @@
     </view>
   </view>
 
-  <!-- ¼ÓÔØ×´Ì¬ -->
-  <view wx:if="{{loading}}" class="loading-text">¼ÓÔØÖĞ...</view>
+  <!-- åŠ è½½çŠ¶æ€ -->
+  <view wx:if="{{loading}}" class="loading-text">åŠ è½½ä¸­...</view>
 
-  <!-- ¿Õ×´Ì¬ -->
-  <view wx:elif="{{orders.length === 0}}" class="empty-text">ÔİÎŞ¶©µ¥</view>
+  <!-- ç©ºçŠ¶æ€ -->
+  <view wx:elif="{{orders.length === 0}}" class="empty-text">æš‚æ— è®¢å•</view>
 
-  <!-- ¶©µ¥ÁĞ±í -->
+  <!-- è®¢å•åˆ—è¡¨ -->
   <view wx:else class="order-list">
     <view class="order-card card" wx:for="{{orders}}" wx:key="id"
           data-id="{{item.id}}" bindtap="goToDetail">
       <view class="order-header">
-        <text class="order-id">¶©µ¥ #{{item.id}}</text>
+        <text class="order-id">è®¢å• #{{item.id}}</text>
         <text class="badge {{item.statusClass}}">{{item.statusText}}</text>
       </view>
       <view class="order-body">
-        <text class="order-user">¶©»§£º{{item.user_name || item.username || 'Î´Öª'}}</text>
+        <text class="order-user">è®¢æˆ·ï¼š{{item.user_name || item.username || 'æœªçŸ¥'}}</text>
         <text class="order-date">{{item.dateShort}}</text>
       </view>
       <view class="order-footer">
