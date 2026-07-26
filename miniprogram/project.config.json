@@ -1,23 +1,41 @@
-{
-  "miniprogramRoot": ".",
-  "compileType": "miniprogram",
-  "appid": "touristappid",
-  "setting": {
-    "es6": true,
-    "postcss": true,
-    "minified": true,
-    "newFeature": true,
-    "uglifyFileName": false,
-    "checkInvalidKey": true,
-    "checkSiteMap": true,
-    "babelSetting": {
-      "ignore": [],
-      "disablePlugins": [],
-      "outputPath": ""
-    }
-  },
-  "editorSetting": {
-    "tabIndent": "insertSpaces",
-    "tabSize": 2
-  }
-}
+{
+  "miniprogramRoot": ".",
+  "compileType": "miniprogram",
+  "appid": "wxcb5dd72469d880a6",
+  "setting": {
+    "es6": true,
+    "postcss": true,
+    "minified": true,
+    "newFeature": true,
+    "uglifyFileName": false,
+    "checkInvalidKey": true,
+    "checkSiteMap": true,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    },
+    "compileWorklet": false,
+    "uploadWithSourceMap": true,
+    "enhance": false,
+    "packNpmManually": false,
+    "packNpmRelationList": [],
+    "minifyWXSS": true,
+    "minifyWXML": true,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": false,
+    "condition": false,
+    "swc": false,
+    "disableSWC": true
+  },
+  "editorSetting": {
+    "tabIndent": "insertSpaces",
+    "tabSize": 2
+  },
+  "simulatorPluginLibVersion": {},
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  }
+}
