@@ -2,10 +2,10 @@
   <!-- 欢迎横幅 -->
   <view class="welcome-banner">
     <view class="welcome-text">
-      <text class="welcome-greeting">欢迎回来，{{username}}</text>
+      <text class="welcome-greeting">欢迎回�¥，{{username}}</text>
       <text class="welcome-role badge {{isAdmin ? 'badge-admin' : 'badge-user'}}">{{isAdmin ? '管理员' : '订户'}}</text>
     </view>
-    <text class="welcome-desc">管理您的报刊订阅</text>
+    <text class="welcome-desc">管理您的�¥刊订阅</text>
   </view>
 
   <!-- 统计卡片 -->
@@ -20,7 +20,7 @@
       <view class="stats-item" bindtap="goToNewspapers">
         <view class="stat-card gradient-green">
           <view class="stat-value">{{stats.newspaperCount}}</view>
-          <view class="stat-label">报刊数</view>
+          <view class="stat-label">�¥刊数</view>
         </view>
       </view>
       <view class="stats-item" bindtap="goToOrders">
@@ -32,7 +32,7 @@
       <view class="stats-item">
         <view class="stat-card gradient-blue">
           <view class="stat-value">?{{stats.revenue}}</view>
-          <view class="stat-label">总收入</view>
+          <view class="stat-label">总收�¥</view>
         </view>
       </view>
     </block>
@@ -40,7 +40,7 @@
       <view class="stats-item" bindtap="goToNewspapers">
         <view class="stat-card gradient-purple">
           <view class="stat-value">{{stats.newspaperCount}}</view>
-          <view class="stat-label">报刊数</view>
+          <view class="stat-label">�¥刊数</view>
         </view>
       </view>
       <view class="stats-item" bindtap="goToOrders">

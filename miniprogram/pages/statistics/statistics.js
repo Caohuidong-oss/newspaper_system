@@ -22,7 +22,7 @@ Page({
     api.getStats()
       .then(res => {
         const total = (res.total_users || 0) + (res.total_newspapers || 0) || 1;
-        // 报刊类型分布（如果有的话）
+        // �¥刊类型分布（如果有的话）
         const typeDist = (res.type_stats || []).map(t => ({
           type: t.type || '其他',
           count: t.count || 0,
@@ -45,7 +45,7 @@ Page({
         });
       })
       .catch(err => {
-        wx.showToast({ title: err.message || '加载失败', icon: 'none' });
+        wx.showToast({ title: err.message || '加载失�¥', icon: 'none' });
         this.setData({ loading: false });
       });
   },

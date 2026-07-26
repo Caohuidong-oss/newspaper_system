@@ -36,7 +36,7 @@ Page({
         this.setData({ orders: list, loading: false });
       })
       .catch(err => {
-        wx.showToast({ title: err.message || '加载失败', icon: 'none' });
+        wx.showToast({ title: err.message || '加载失�¥', icon: 'none' });
         this.setData({ loading: false });
       });
   },

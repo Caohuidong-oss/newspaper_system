@@ -18,11 +18,11 @@ Page({
   onLogin() {
     const { username, password } = this.data;
     if (!username.trim()) {
-      wx.showToast({ title: '请输入用户名', icon: 'none' });
+      wx.showToast({ title: '请输�¥用户名', icon: 'none' });
       return;
     }
     if (!password.trim()) {
-      wx.showToast({ title: '请输入密码', icon: 'none' });
+      wx.showToast({ title: '请输�¥密码', icon: 'none' });
       return;
     }
 
@@ -46,7 +46,7 @@ Page({
         }, 500);
       })
       .catch(err => {
-        wx.showToast({ title: err.message || '登录失败', icon: 'none' });
+        wx.showToast({ title: err.message || '登录失�¥', icon: 'none' });
       })
       .finally(() => {
         this.setData({ loading: false });

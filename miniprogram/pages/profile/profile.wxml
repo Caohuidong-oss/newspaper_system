@@ -27,7 +27,7 @@
     <button wx:if="{{editable}}" class="btn-primary save-btn" bindtap="onSave">保存资料</button>
   </view>
 
-  <!-- 快捷入口 -->
+  <!-- 快捷�¥口 -->
   <view class="card" wx:if="{{isAdmin}}">
     <view class="card-header">管理</view>
     <view class="menu-item" bindtap="goToStatistics">

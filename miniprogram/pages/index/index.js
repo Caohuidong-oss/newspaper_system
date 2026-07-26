@@ -55,7 +55,7 @@ Page({
     // 加载最近订单
     api.getOrders()
       .then(data => {
-        // api.getOrders 返回 {orders: [...], total: N} 或直接数组
+        // api.getOrders 返回 {orders: [...], total: N} 或直�¥数组
         const list = Array.isArray(data) ? data : (data.orders || []);
         const recent = list.slice(0, 5).map(o => ({
           id: o.order_id,

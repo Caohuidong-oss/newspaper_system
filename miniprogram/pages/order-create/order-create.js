@@ -43,7 +43,7 @@ Page({
         this.setData({ newspapers: list, quantities, selectedNewspaper: selected });
       })
       .catch(err => {
-        wx.showToast({ title: err.message || '加载失败', icon: 'none' });
+        wx.showToast({ title: err.message || '加载失�¥', icon: 'none' });
       })
       .finally(() => {
         this.setData({ loading: false });
@@ -111,7 +111,7 @@ Page({
       }));
 
     if (items.length === 0) {
-      wx.showToast({ title: '请至少选择一种报刊', icon: 'none' });
+      wx.showToast({ title: '请至少选择一种�¥刊', icon: 'none' });
       return;
     }
 
@@ -129,7 +129,7 @@ Page({
         }, 500);
       })
       .catch(err => {
-        wx.showToast({ title: err.message || '下单失败', icon: 'none' });
+        wx.showToast({ title: err.message || '下单失�¥', icon: 'none' });
       })
       .finally(() => {
         this.setData({ submitting: false });

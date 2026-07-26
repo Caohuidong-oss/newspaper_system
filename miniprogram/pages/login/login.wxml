@@ -1,16 +1,16 @@
 ﻿<view class="login-container">
   <view class="login-card card">
-    <view class="login-title">报刊订阅系统</view>
-    <view class="login-subtitle">欢迎回来，请登录您的账号</view>
+    <view class="login-title">�¥刊订阅系统</view>
+    <view class="login-subtitle">欢迎回�¥，请登录您的账号</view>
 
     <view class="form-group">
       <text class="form-label">用户名</text>
-      <input class="form-input" placeholder="请输入用户名" value="{{username}}" bindinput="onUsernameInput" />
+      <input class="form-input" placeholder="请输�¥用户名" value="{{username}}" bindinput="onUsernameInput" />
     </view>
 
     <view class="form-group">
       <text class="form-label">密码</text>
-      <input class="form-input" password type="text" placeholder="请输入密码" value="{{password}}" bindinput="onPasswordInput" />
+      <input class="form-input" password type="text" placeholder="请输�¥密码" value="{{password}}" bindinput="onPasswordInput" />
     </view>
 
     <button class="btn btn-primary login-btn" bindtap="onLogin" loading="{{loading}}">登录</button>
