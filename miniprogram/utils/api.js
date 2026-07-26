@@ -43,6 +43,9 @@ module.exports = {
   login: (username, password) =>
     request('/auth/dev_login', { method: 'POST', data: { username, password } }),
 
+  register: (data) =>
+    request('/auth/register', { method: 'POST', data }),
+
   getProfile: () => request('/auth/profile'),
 
   // ── 报刊 ──

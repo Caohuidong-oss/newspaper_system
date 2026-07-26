@@ -214,6 +214,64 @@ def api_dev_login():
     return ok({'token': token, 'username': user.username, 'role': user.role, 'is_admin': user.role == 'admin'})
 
 
+@api.route('/auth/register', methods=['POST'])
+def api_register():
+    """小程序注册接口（普通用户）
+    POST {username, password, real_name, phone='', address=''}
+    """
+    data = request.get_json(force=True, silent=True) or {}
+    username = (data.get('username') or '').strip()
+    password = data.get('password') or ''
+    real_name = (data.get('real_name') or username).strip()
+    phone = (data.get('phone') or '').strip()
+    address = (data.get('address') or '').strip()
+
+    if not username:
+        return fail('请输入用户名')
+    if len(username) < 3:
+        return fail('用户名至少 3 个字符')
+    if len(password) < 6:
+        return fail('密码至少 6 位')
+
+    # 用户名已存在？
+    if LoginUser.query.filter_by(username=username).first():
+        return fail('用户名已存在')
+
+    try:
+        # 创建登录账号
+        login_user = LoginUser(
+            username=username,
+            password_hash=generate_password_hash(password),
+            role='user',
+            created_at=datetime.now(),
+        )
+        db.session.add(login_user)
+        db.session.flush()
+
+        # 同时创建订户记录（用于下单）
+        if not User.query.filter_by(username=username).first():
+            subscriber = User(
+                username=username,
+                password='',  # 不存明文（实际认证走 LoginUser）
+                real_name=real_name,
+                phone=phone,
+                address=address,
+            )
+            db.session.add(subscriber)
+
+        db.session.commit()
+        token = make_jwt(f'dev_{username}', login_user.username, login_user.role)
+        return ok({
+            'token': token,
+            'username': login_user.username,
+            'role': 'user',
+            'is_admin': False,
+        }, '注册成功！')
+    except Exception as e:
+        db.session.rollback()
+        return fail(f'注册失败：{str(e)}')
+
+
 @api.route('/auth/profile', methods=['GET'])
 @login_required_api
 def api_profile():

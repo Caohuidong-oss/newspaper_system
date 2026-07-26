@@ -54,6 +54,6 @@ Page({
   },
 
   onRegister() {
-    wx.showToast({ title: '请联系管理员注册', icon: 'none' });
+    wx.navigateTo({ url: '/pages/register/register' });
   },
 });

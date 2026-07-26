@@ -1,0 +1,115 @@
+﻿.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 40rpx 20rpx;
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.register-card {
+  width: 100%;
+  max-width: 580rpx;
+  background: #fff;
+  border-radius: 24rpx;
+  overflow: hidden;
+  box-shadow: 0 16rpx 48rpx rgba(0,0,0,.2);
+}
+
+.register-header {
+  background: linear-gradient(135deg, #11998e, #38ef7d);
+  padding: 50rpx 40rpx;
+  text-align: center;
+  color: #fff;
+}
+
+.register-icon {
+  font-size: 64rpx;
+  margin-bottom: 12rpx;
+}
+
+.register-title {
+  font-size: 36rpx;
+  font-weight: 700;
+}
+
+.register-subtitle {
+  font-size: 24rpx;
+  opacity: .8;
+  margin-top: 8rpx;
+}
+
+.register-body {
+  padding: 40rpx;
+}
+
+.form-group {
+  margin-bottom: 24rpx;
+}
+
+.form-label {
+  display: block;
+  font-size: 24rpx;
+  color: #666;
+  font-weight: 600;
+  margin-bottom: 10rpx;
+}
+
+.required {
+  color: #e74c3c;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  background: #f5f7fa;
+  border-radius: 12rpx;
+  border: 1rpx solid #e8ecf1;
+  overflow: hidden;
+}
+
+.input-icon {
+  padding: 0 16rpx;
+  font-size: 28rpx;
+}
+
+.form-input {
+  flex: 1;
+  height: 80rpx;
+  background: transparent;
+  padding: 0 20rpx 0 0;
+  font-size: 28rpx;
+  border: none;
+  outline: none;
+}
+
+.register-btn {
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  background: linear-gradient(135deg, #11998e, #38ef7d);
+  color: #fff;
+  border-radius: 40rpx;
+  font-size: 30rpx;
+  font-weight: 700;
+  margin-top: 24rpx;
+  border: none;
+  text-align: center;
+}
+
+.register-btn:active {
+  opacity: .85;
+}
+
+.register-tips {
+  text-align: center;
+  margin-top: 24rpx;
+  font-size: 24rpx;
+  color: #999;
+}
+
+.link {
+  color: #11998e;
+  font-weight: 600;
+  margin-left: 4rpx;
+}
