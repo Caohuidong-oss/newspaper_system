@@ -1,23 +1,38 @@
-﻿<view class="login-container">
-  <view class="login-card card">
-    <view class="login-title">报刊订阅系统</view>
-    <view class="login-subtitle">欢迎回来，请登录您的账号</view>
-
-    <view class="form-group">
-      <text class="form-label">用户名</text>
-      <input class="form-input" placeholder="请输入用户名" value="{{username}}" bindinput="onUsernameInput" />
+<view class="login-container">
+  <view class="login-card">
+    <!-- 紫色渐变的头部 -->
+    <view class="login-header">
+      <view class="login-icon">📰</view>
+      <view class="login-title">报刊订阅系统</view>
+      <view class="login-subtitle">登录以继续</view>
     </view>
 
-    <view class="form-group">
-      <text class="form-label">密码</text>
-      <input class="form-input" password type="text" placeholder="请输入密码" value="{{password}}" bindinput="onPasswordInput" />
-    </view>
+    <!-- 表单区 -->
+    <view class="login-body">
+      <view class="form-group">
+        <text class="form-label">用户名</text>
+        <view class="input-group">
+          <text class="input-icon">👤</text>
+          <input class="form-input" placeholder="请输入用户名"
+                 value="{{username}}" bindinput="onUsernameInput" />
+        </view>
+      </view>
 
-    <button class="btn btn-primary login-btn" bindtap="onLogin" loading="{{loading}}">登录</button>
+      <view class="form-group">
+        <text class="form-label">密码</text>
+        <view class="input-group">
+          <text class="input-icon">🔒</text>
+          <input class="form-input" password type="text" placeholder="请输入密码"
+                 value="{{password}}" bindinput="onPasswordInput" />
+        </view>
+      </view>
 
-    <view class="login-tips">
-      <text>还没有账号？</text>
-      <text class="link" bindtap="onRegister">联系管理员注册</text>
+      <button class="login-btn" bindtap="onLogin" loading="{{loading}}">🔐 登 录</button>
+
+      <view class="login-tips">
+        <text>还没有账号？</text>
+        <text class="link" bindtap="onRegister">立即注册 →</text>
+      </view>
     </view>
   </view>
 </view>

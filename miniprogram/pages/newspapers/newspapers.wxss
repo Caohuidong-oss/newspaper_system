@@ -6,27 +6,26 @@
   display: flex;
   align-items: center;
   gap: 16rpx;
-  margin-bottom: 0;
+  margin: 20rpx;
+  padding: 16rpx 24rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,.06);
 }
 
 .search-input {
   flex: 1;
-  height: 68rpx;
-  background: #f5f7fa;
-  border-radius: 12rpx;
-  padding: 0 20rpx;
+  height: 60rpx;
   font-size: 26rpx;
 }
 
 .search-btn {
-  flex-shrink: 0;
+  padding: 12rpx 28rpx;
   background: linear-gradient(135deg, #667eea, #764ba2);
   color: #fff;
-  border-radius: 12rpx;
-  padding: 0 30rpx;
-  height: 68rpx;
-  line-height: 68rpx;
-  font-size: 26rpx;
+  border-radius: 30rpx;
+  font-size: 24rpx;
+  font-weight: 600;
   border: none;
 }
 
@@ -43,8 +42,10 @@
 .newspaper-card {
   width: calc(50% - 20rpx);
   margin: 10rpx;
-  padding: 0;
+  background: #fff;
+  border-radius: 16rpx;
   overflow: hidden;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,.06);
 }
 
 .newspaper-image {
@@ -55,40 +56,40 @@
 
 .newspaper-info {
   padding: 20rpx;
-  display: flex;
-  flex-direction: column;
-  gap: 8rpx;
 }
 
 .newspaper-name {
+  display: block;
   font-size: 28rpx;
-  font-weight: 600;
+  font-weight: 700;
   color: #333;
+  margin-bottom: 8rpx;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .newspaper-type {
-  align-self: flex-start;
+  font-size: 20rpx;
+  margin-bottom: 12rpx;
 }
 
 .newspaper-price {
-  font-size: 32rpx;
+  display: block;
+  font-size: 30rpx;
   font-weight: 700;
   color: #e74c3c;
-  margin-top: 4rpx;
 }
 
 .price-unit {
-  font-size: 22rpx;
+  font-size: 20rpx;
   font-weight: 400;
   color: #999;
 }
 
 .loading-text, .empty-text {
   text-align: center;
-  padding: 80rpx 0;
+  padding: 60rpx 0;
   color: #999;
   font-size: 28rpx;
 }
