@@ -1,1 +1,25 @@
-<view class="newspapers-container">  <!-- 搜索�?-->  <view class="search-bar card">    <input class="search-input" placeholder="搜索报刊名称..." value="{{keyword}}" bindinput="onKeywordInput" />    <button class="search-btn" bindtap="onSearch">搜索</button>  </view>  <!-- 加载状�?-->  <view wx:if="{{loading}}" class="loading-text">加载�..</view>  <!-- 空状�?-->  <view wx:elif="{{newspapers.length === 0}}" class="empty-text">暂无报刊</view>  <!-- 报刊网格 -->  <view wx:else class="newspapers-grid">    <view class="newspaper-card card" wx:for="{{newspapers}}" wx:key="id" data-id="{{item.id}}" bindtap="goToCreateOrder">      <image class="newspaper-image" src="{{item.image || '/images/default-newspaper.png'}}" mode="aspectFill" />      <view class="newspaper-info">        <text class="newspaper-name">{{item.name}}</text>        <text class="newspaper-type badge badge-pending">{{item.type || '综合'}}</text>        <text class="newspaper-price">¥{{item.price}}<text class="price-unit">/�?/text></text>      </view>    </view>  </view></view>
+﻿<view class="newspapers-container">
+  <!-- 搜索栏 -->
+  <view class="search-bar card">
+    <input class="search-input" placeholder="搜索报刊名称..." value="{{keyword}}" bindinput="onKeywordInput" />
+    <button class="search-btn" bindtap="onSearch">搜索</button>
+  </view>
+
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-text">加载中...</view>
+
+  <!-- 空状态 -->
+  <view wx:elif="{{newspapers.length === 0}}" class="empty-text">暂无报刊</view>
+
+  <!-- 报刊网格 -->
+  <view wx:else class="newspapers-grid">
+    <view class="newspaper-card card" wx:for="{{newspapers}}" wx:key="id" data-id="{{item.id}}" bindtap="goToCreateOrder">
+      <image class="newspaper-image" src="{{item.image_url || '/images/default-newspaper.png'}}" mode="aspectFill" />
+      <view class="newspaper-info">
+        <text class="newspaper-name">{{item.name}}</text>
+        <text class="newspaper-type badge badge-pending">{{item.type || '其他'}}</text>
+        <text class="newspaper-price">?{{item.price}}<text class="price-unit">/期</text></text>
+      </view>
+    </view>
+  </view>
+</view>

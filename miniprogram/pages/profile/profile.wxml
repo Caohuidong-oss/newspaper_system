@@ -1,1 +1,43 @@
-<view class="profile-container">  <!-- 用户信息头部 -->  <view class="profile-header card">    <view class="avatar">{{username.charAt(0).toUpperCase() || 'U'}}</view>    <view class="profile-meta">      <text class="profile-username">{{username}}</text>      <text class="badge {{isAdmin ? 'badge-admin' : 'badge-user'}} profile-role">{{isAdmin ? '管理�? : '订户'}}</text>    </view>    <button class="edit-btn" bindtap="toggleEdit">{{editable ? '取消' : '编辑'}}</button>  </view>  <!-- 订户信息 -->  <view class="card">    <view class="card-header">订阅信息</view>    <view class="info-row">      <text class="info-label">姓名</text>      <input class="info-input" value="{{subscriberName}}" disabled="{{!editable}}" bindinput="onNameInput" placeholder="未填�? />    </view>    <view class="info-row">      <text class="info-label">电话</text>      <input class="info-input" value="{{subscriberPhone}}" disabled="{{!editable}}" bindinput="onPhoneInput" placeholder="未填�? type="number" />    </view>    <view class="info-row">      <text class="info-label">地址</text>      <input class="info-input" value="{{subscriberAddress}}" disabled="{{!editable}}" bindinput="onAddressInput" placeholder="未填�? />    </view>    <button wx:if="{{editable}}" class="btn-primary save-btn" bindtap="onSave">保存资料</button>  </view>  <!-- 快捷入口 -->  <view class="card" wx:if="{{isAdmin}}">    <view class="card-header">管理</view>    <view class="menu-item" bindtap="goToStatistics">      <text>数据统计</text>      <text class="menu-arrow">></text>    </view>  </view>  <!-- 退�?-->  <view class="logout-bar">    <button class="btn-danger logout-btn" bindtap="onLogout">退出登�?/button>  </view></view>
+﻿<view class="profile-container">
+  <!-- 用户信息头部 -->
+  <view class="profile-header card">
+    <view class="avatar">{{initialLetter}}</view>
+    <view class="profile-meta">
+      <text class="profile-username">{{username}}</text>
+      <text class="badge {{isAdmin ? 'badge-admin' : 'badge-user'}} profile-role">{{isAdmin ? '管理员' : '订户'}}</text>
+    </view>
+    <button class="edit-btn" bindtap="toggleEdit">{{editable ? '取消' : '编辑'}}</button>
+  </view>
+
+  <!-- 订户信息 -->
+  <view class="card">
+    <view class="card-header">订阅信息</view>
+    <view class="info-row">
+      <text class="info-label">姓名</text>
+      <input class="info-input" value="{{subscriberName}}" disabled="{{!editable}}" bindinput="onNameInput" placeholder="未填写" />
+    </view>
+    <view class="info-row">
+      <text class="info-label">电话</text>
+      <input class="info-input" value="{{subscriberPhone}}" disabled="{{!editable}}" bindinput="onPhoneInput" placeholder="未填写" type="number" />
+    </view>
+    <view class="info-row">
+      <text class="info-label">地址</text>
+      <input class="info-input" value="{{subscriberAddress}}" disabled="{{!editable}}" bindinput="onAddressInput" placeholder="未填写" />
+    </view>
+    <button wx:if="{{editable}}" class="btn-primary save-btn" bindtap="onSave">保存资料</button>
+  </view>
+
+  <!-- 快捷入口 -->
+  <view class="card" wx:if="{{isAdmin}}">
+    <view class="card-header">管理</view>
+    <view class="menu-item" bindtap="goToStatistics">
+      <text>数据统计</text>
+      <text class="menu-arrow">?</text>
+    </view>
+  </view>
+
+  <!-- 退出 -->
+  <view class="logout-bar">
+    <button class="btn-danger logout-btn" bindtap="onLogout">退出登录</button>
+  </view>
+</view>

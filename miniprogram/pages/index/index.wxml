@@ -1,1 +1,79 @@
-<view class="index-container">  <!-- 欢迎横幅 -->  <view class="welcome-banner">    <view class="welcome-text">      <text class="welcome-greeting">欢迎回来，{{username}}</text>      <text class="welcome-role badge {{isAdmin ? 'badge-admin' : 'badge-user'}}">{{isAdmin ? '管理�? : '订户'}}</text>    </view>    <text class="welcome-desc">管理您的报刊订阅</text>  </view>  <!-- 统计卡片 -->  <view class="stats-grid">    <block wx:if="{{isAdmin}}">      <view class="stats-item" bindtap="goToStatistics">        <view class="stat-card gradient-purple">          <view class="stat-value">{{stats.userCount}}</view>          <view class="stat-label">用户�?/view>        </view>      </view>      <view class="stats-item" bindtap="goToNewspapers">        <view class="stat-card gradient-green">          <view class="stat-value">{{stats.newspaperCount}}</view>          <view class="stat-label">报刊�?/view>        </view>      </view>      <view class="stats-item" bindtap="goToOrders">        <view class="stat-card gradient-pink">          <view class="stat-value">{{stats.orderCount}}</view>          <view class="stat-label">订单�?/view>        </view>      </view>      <view class="stats-item">        <view class="stat-card gradient-blue">          <view class="stat-value">¥{{stats.revenue}}</view>          <view class="stat-label">总收�?/view>        </view>      </view>    </block>    <block wx:else>      <view class="stats-item" bindtap="goToNewspapers">        <view class="stat-card gradient-purple">          <view class="stat-value">{{stats.newspaperCount}}</view>          <view class="stat-label">报刊�?/view>        </view>      </view>      <view class="stats-item" bindtap="goToOrders">        <view class="stat-card gradient-green">          <view class="stat-value">{{stats.myOrderCount}}</view>          <view class="stat-label">我的订单</view>        </view>      </view>      <view class="stats-item">        <view class="stat-card gradient-pink">          <view class="stat-value">¥{{stats.mySpending}}</view>          <view class="stat-label">我的消费</view>        </view>      </view>    </block>  </view>  <!-- 最近订�?-->  <view class="card">    <view class="card-header">最近订�?/view>    <view wx:if="{{loading}}" class="loading-text">加载�..</view>    <view wx:elif="{{recentOrders.length === 0}}" class="empty-text">暂无订单</view>    <view wx:else class="order-list">      <view class="order-item" wx:for="{{recentOrders}}" wx:key="id" data-id="{{item.id}}" bindtap="goToOrders">        <view class="order-info">          <text class="order-id">#{{item.id}}</text>          <text class="order-date">{{item.dateShort}}</text>        </view>        <view class="order-meta">          <text class="order-amount">¥{{item.totalAmount}}</text>          <text class="badge {{item.statusClass}}">{{item.statusText}}</text>        </view>      </view>    </view>  </view></view>
+﻿<view class="index-container">
+  <!-- 欢迎横幅 -->
+  <view class="welcome-banner">
+    <view class="welcome-text">
+      <text class="welcome-greeting">欢迎回来，{{username}}</text>
+      <text class="welcome-role badge {{isAdmin ? 'badge-admin' : 'badge-user'}}">{{isAdmin ? '管理员' : '订户'}}</text>
+    </view>
+    <text class="welcome-desc">管理您的报刊订阅</text>
+  </view>
+
+  <!-- 统计卡片 -->
+  <view class="stats-grid">
+    <block wx:if="{{isAdmin}}">
+      <view class="stats-item" bindtap="goToStatistics">
+        <view class="stat-card gradient-purple">
+          <view class="stat-value">{{stats.userCount}}</view>
+          <view class="stat-label">用户数</view>
+        </view>
+      </view>
+      <view class="stats-item" bindtap="goToNewspapers">
+        <view class="stat-card gradient-green">
+          <view class="stat-value">{{stats.newspaperCount}}</view>
+          <view class="stat-label">报刊数</view>
+        </view>
+      </view>
+      <view class="stats-item" bindtap="goToOrders">
+        <view class="stat-card gradient-pink">
+          <view class="stat-value">{{stats.orderCount}}</view>
+          <view class="stat-label">订单数</view>
+        </view>
+      </view>
+      <view class="stats-item">
+        <view class="stat-card gradient-blue">
+          <view class="stat-value">?{{stats.revenue}}</view>
+          <view class="stat-label">总收入</view>
+        </view>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="stats-item" bindtap="goToNewspapers">
+        <view class="stat-card gradient-purple">
+          <view class="stat-value">{{stats.newspaperCount}}</view>
+          <view class="stat-label">报刊数</view>
+        </view>
+      </view>
+      <view class="stats-item" bindtap="goToOrders">
+        <view class="stat-card gradient-green">
+          <view class="stat-value">{{stats.myOrderCount}}</view>
+          <view class="stat-label">我的订单</view>
+        </view>
+      </view>
+      <view class="stats-item">
+        <view class="stat-card gradient-pink">
+          <view class="stat-value">?{{stats.mySpending}}</view>
+          <view class="stat-label">我的消费</view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 最近订单 -->
+  <view class="card">
+    <view class="card-header">最近订单</view>
+    <view wx:if="{{loading}}" class="loading-text">加载中...</view>
+    <view wx:elif="{{recentOrders.length === 0}}" class="empty-text">暂无订单</view>
+    <view wx:else class="order-list">
+      <view class="order-item" wx:for="{{recentOrders}}" wx:key="id" data-id="{{item.id}}" bindtap="goToOrders">
+        <view class="order-info">
+          <text class="order-id">#{{item.id}}</text>
+          <text class="order-date">{{item.dateShort}}</text>
+        </view>
+        <view class="order-meta">
+          <text class="order-amount">?{{item.totalAmount}}</text>
+          <text class="badge {{item.statusClass}}">{{item.statusText}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
