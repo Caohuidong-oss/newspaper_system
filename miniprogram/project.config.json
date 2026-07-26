@@ -10,6 +10,7 @@
     "uglifyFileName": false,
     "checkInvalidKey": true,
     "checkSiteMap": true,
+    "urlCheck": false,
     "babelSetting": {
       "ignore": [],
       "disablePlugins": [],
