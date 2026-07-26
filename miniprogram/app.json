@@ -10,7 +10,7 @@
     "pages/statistics/statistics"
   ],
   "window": {
-    "navigationBarTitleText": "报刊订阅系统",
+    "navigationBarTitleText": "鎶ュ垔璁㈤槄绯荤粺",
     "navigationBarBackgroundColor": "#667eea",
     "navigationBarTextStyle": "white",
     "backgroundColor": "#f5f7fa"
@@ -25,25 +25,25 @@
         "pagePath": "pages/index/index",
         "iconPath": "images/home.png",
         "selectedIconPath": "images/home-active.png",
-        "text": "首页"
+        "text": "棣栭〉"
       },
       {
         "pagePath": "pages/newspapers/newspapers",
         "iconPath": "images/newspaper.png",
         "selectedIconPath": "images/newspaper-active.png",
-        "text": "报刊"
+        "text": "鎶ュ垔"
       },
       {
         "pagePath": "pages/orders/orders",
         "iconPath": "images/order.png",
         "selectedIconPath": "images/order-active.png",
-        "text": "订单"
+        "text": "璁㈠崟"
       },
       {
         "pagePath": "pages/profile/profile",
         "iconPath": "images/profile.png",
         "selectedIconPath": "images/profile-active.png",
-        "text": "我的"
+        "text": "鎴戠殑"
       }
     ]
   },

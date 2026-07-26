@@ -27,7 +27,7 @@ Page({
         this.setData({ newspapers: list });
       })
       .catch(err => {
-        wx.showToast({ title: err.message || '加载失败', icon: 'none' });
+        wx.showToast({ title: err.message || '鍔犺浇澶辫触', icon: 'none' });
       })
       .finally(() => {
         this.setData({ loading: false });
