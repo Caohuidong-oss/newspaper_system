@@ -15,6 +15,7 @@ app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0  # 禁用静态文件缓存
 db.init_app(app)
 csrf = CSRFProtect(app)
 app.register_blueprint(api)
+csrf.exempt(api)  # API 蓝图豁免 CSRF（小程序/外部调用）
 
 # 让 HTML 响应不缓存，避免浏览器拿到老模板
 @app.after_request
