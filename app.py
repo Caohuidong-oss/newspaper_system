@@ -191,10 +191,21 @@ def profile():
     total_spent = db.session.query(func.sum(Order.total_amount))\
         .filter(Order.user_id == subscriber.user_id).scalar() or 0
 
+    # 管理员全局概览
+    admin_stats = {}
+    if session.get('role') == 'admin':
+        admin_stats = {
+            'total_users': User.query.count(),
+            'total_newspapers': Newspaper.query.count(),
+            'total_orders': Order.query.count(),
+            'total_revenue': float(db.session.query(func.sum(Order.total_amount)).scalar() or 0),
+        }
+
     return render_template('profile.html',
                            subscriber=subscriber,
                            order_count=order_count,
-                           total_spent=total_spent)
+                           total_spent=total_spent,
+                           admin_stats=admin_stats)
 
 # ==================== 修改密码 ====================
 @app.route('/change_password', methods=['GET', 'POST'])
