@@ -78,14 +78,6 @@
             </div>
         </div>
 
-        <div class="d-grid gap-2 mt-2">
-            <a href="{{ url_for('users') }}" class="btn btn-outline-primary btn-sm">👥 订户管理</a>
-            <a href="{{ url_for('admin_users') }}" class="btn btn-outline-warning btn-sm">👑 权限管理</a>
-            <a href="{{ url_for('orders') }}" class="btn btn-outline-info btn-sm">📦 全部订单</a>
-            <a href="{{ url_for('statistics') }}" class="btn btn-outline-danger btn-sm">📊 统计详情</a>
-        </div>
-        {% endif %}
-
         <div class="d-grid gap-2 mt-3">
             <a href="{{ url_for('change_password') }}" class="btn btn-outline-warning">🔒 修改密码</a>
             <a href="{{ url_for('set_security') }}" class="btn btn-outline-info">🔐 设置安全问题</a>
