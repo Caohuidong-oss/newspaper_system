@@ -133,8 +133,8 @@ def register():
                 username=username,
                 password='',  # 密码已存于 LoginUser.password_hash，此处不再存明文
                 real_name=username,
-                phone='',
-                address=''
+                phone=request.form.get('phone', '').strip(),
+                address=request.form.get('address', '').strip()
             )
             db.session.add(new_subscriber)
         
