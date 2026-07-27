@@ -3,11 +3,29 @@ from app import app, db
 from models import User, Newspaper, LoginUser
 from werkzeug.security import generate_password_hash
 from datetime import datetime
+from sqlalchemy import text
 
 with app.app_context():
     # 1. 创建所有表
     db.create_all()
-    print("✅ 数据库表创建完成")
+    print("数据库表创建完成")
+
+    # 1.5 在线迁移：给 order_main 表加 delivery_address 列（不存在才加）
+    try:
+        result = db.session.execute(text(
+            "SHOW COLUMNS FROM order_main LIKE 'delivery_address'"
+        ))
+        if result.fetchone() is None:
+            db.session.execute(text(
+                "ALTER TABLE order_main ADD COLUMN delivery_address VARCHAR(500) DEFAULT ''"
+            ))
+            db.session.commit()
+            print("已添加 order_main.delivery_address 列")
+        else:
+            print("delivery_address 列已存在")
+    except Exception as e:
+        print(f"迁移检查跳过: {e}")
+        db.session.rollback()
 
     # 2. 如果报刊表为空，导入初始报刊
     if Newspaper.query.count() == 0:
