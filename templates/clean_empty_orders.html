@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}清理空订单{% endblock %}
+{% block top_title %}清理空订单{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm fade-in" style="max-width: 800px; margin: 0 auto;">
+    <div class="card-header bg-warning text-dark">
+        <h5 class="mb-0">⚠️ 清理空订单</h5>
+    </div>
+    <div class="card-body">
+        <p class="text-muted">
+            此功能将删除所有 <strong>没有订阅明细</strong> 的订单（创建后没有添加任何报刊的订单）。
+        </p>
+
+        <div class="row g-3 my-4">
+            <div class="col-6 col-md-4">
+                <div class="border rounded p-3 text-center bg-light">
+                    <div class="fs-3 fw-bold text-danger">{{ count }}</div>
+                    <div class="text-muted small">待清理订单数</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4">
+                <div class="border rounded p-3 text-center bg-light">
+                    <div class="fs-3 fw-bold text-secondary">¥{{ "%.2f"|format(total_amount) }}</div>
+                    <div class="text-muted small">涉及金额</div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="border rounded p-3 text-center bg-light">
+                    <div class="fs-3 fw-bold text-success">不可恢复</div>
+                    <div class="text-muted small">⚠️ 删除后无法恢复</div>
+                </div>
+            </div>
+        </div>
+
+        {% if count == 0 %}
+        <div class="text-center py-4">
+            <div class="display-4 mb-2">✅</div>
+            <h5 class="text-success">太棒了，没有空订单</h5>
+            <p class="text-muted small">数据库中没有需要清理的空订单</p>
+        </div>
+        {% else %}
+        {% if orders %}
+        <div class="border rounded p-3 mb-4" style="max-height: 280px; overflow-y: auto;">
+            <small class="text-muted">预览（前 50 条）：</small>
+            <table class="table table-sm mt-2 mb-0">
+                <thead>
+                    <tr><th>#</th><th>订户</th><th>金额</th><th>创建时间</th></tr>
+                </thead>
+                <tbody>
+                    {% for o in orders %}
+                    <tr>
+                        <td>#{{ o.order_id }}</td>
+                        <td>{{ o.user.real_name if o.user else '-' }}</td>
+                        <td class="text-end">¥{{ "%.2f"|format(o.total_amount) }}</td>
+                        <td><small class="text-muted">{{ o.order_date.strftime('%m-%d %H:%M') if o.order_date else '-' }}</small></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% if count > 50 %}
+            <small class="text-muted d-block mt-2 text-center">还有 {{ count - 50 }} 条未显示...</small>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <form method="POST" onsubmit="return confirm('确定要删除这 {{ count }} 条空订单吗？此操作不可撤销！');">
+            <div class="d-flex gap-2 justify-content-end">
+                <a href="{{ url_for('orders') }}" class="btn btn-outline-secondary">取消</a>
+                <button type="submit" class="btn btn-danger">🗑️ 确认清理 {{ count }} 条空订单</button>
+            </div>
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

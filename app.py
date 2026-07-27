@@ -740,17 +740,29 @@ def order_delete(order_id):
     flash('订单已删除', 'danger')
     return redirect(url_for('orders'))
 
-@app.route('/order/clean_empty', methods=['POST'])
+@app.route('/order/clean_empty', methods=['GET', 'POST'])
 @admin_required
 def order_clean_empty():
-    """清理空订单（无订阅明细的订单）"""
+    """清理空订单（无订阅明细的订单）
+    GET: 显示确认页面
+    POST: 真正执行清理
+    """
     empty_orders = Order.query.filter(~Order.subscriptions.any()).all()
     count = len(empty_orders)
-    for o in empty_orders:
-        db.session.delete(o)
-    db.session.commit()
-    flash(f'已清理 {count} 条空订单（无订阅明细）', 'success')
-    return redirect(url_for('orders'))
+    total_amount = sum(float(o.total_amount or 0) for o in empty_orders)
+
+    if request.method == 'POST':
+        for o in empty_orders:
+            db.session.delete(o)
+        db.session.commit()
+        flash(f'已清理 {count} 条空订单（无订阅明细）', 'success')
+        return redirect(url_for('orders'))
+
+    # GET: 显示确认页
+    return render_template('clean_empty_orders.html',
+                         count=count,
+                         total_amount=total_amount,
+                         orders=empty_orders[:50])
 
 @app.route('/order/batch_action', methods=['POST'])
 @admin_required
