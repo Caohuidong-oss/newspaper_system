@@ -172,7 +172,7 @@
                     <button type="submit" class="btn btn-success rounded-pill px-4">✅ 确认订单</button>
                 </form>
             {% elif order.status == 2 %}
-                <span class="badge bg-success px-3 py-2 rounded-pill">✅ 订单已确认</span>
+                <span class="btn btn-outline-success rounded-pill px-4 disabled">✅ 订单已确认</span>
             {% endif %}
             {% if order.status != 3 %}
                 <form action="{{ url_for('order_cancel', order_id=order.order_id) }}" method="POST"
