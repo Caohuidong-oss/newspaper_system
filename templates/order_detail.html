@@ -166,11 +166,10 @@
            class="btn btn-outline-info rounded-pill px-4">🖨️ 打印订单</a>
         {% if session.role == 'admin' %}
             {% if order.status == 1 %}
-                        <form action="{{ url_for('order_confirm', order_id=order.order_id) }}" method="POST"
-                              onsubmit="return confirm('确定要确认该订单吗？');">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        ✅ 确认订单
-                    </button>
+                <form action="{{ url_for('order_confirm', order_id=order.order_id) }}" method="POST"
+                      onsubmit="return confirm('确定要确认该订单吗？');">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-success rounded-pill px-4">✅ 确认订单</button>
                 </form>
             {% elif order.status == 2 %}
                 <span class="badge bg-success px-3 py-2 rounded-pill">✅ 订单已确认</span>
