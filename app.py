@@ -7,6 +7,7 @@ from werkzeug.utils import secure_filename
 from functools import wraps
 from flask_wtf.csrf import CSRFProtect
 import os
+from datetime import datetime, timedelta
 from api import api
 
 app = Flask(__name__)
@@ -194,11 +195,19 @@ def profile():
     # 管理员全局概览
     admin_stats = {}
     if session.get('role') == 'admin':
+        yesterday = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=1)
+        yesterday_end = yesterday + timedelta(hours=23, minutes=59, seconds=59)
+        today_start = yesterday + timedelta(days=1)
+
         admin_stats = {
             'total_users': User.query.count(),
             'total_newspapers': Newspaper.query.count(),
             'total_orders': Order.query.count(),
             'total_revenue': float(db.session.query(func.sum(Order.total_amount)).scalar() or 0),
+            'yesterday_new_users': User.query.filter(User.register_date.between(yesterday, yesterday_end)).count(),
+            'yesterday_new_orders': Order.query.filter(Order.order_date.between(yesterday, yesterday_end)).count(),
+            'today_new_users': User.query.filter(User.register_date >= today_start).count(),
+            'today_new_orders': Order.query.filter(Order.order_date >= today_start).count(),
         }
 
     return render_template('profile.html',
