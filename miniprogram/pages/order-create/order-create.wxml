@@ -45,6 +45,12 @@
     <textarea class="remark-input" placeholder="选填：备注配送信息..." value="{{remark}}" bindinput="onRemarkInput" />
   </view>
 
+  <!-- 配送地址 -->
+  <view class="card">
+    <view class="card-header">配送地址</view>
+    <textarea class="remark-input" placeholder="填写本次订单配送地址（默认使用注册地址）" value="{{deliveryAddress}}" bindinput="onAddressInput" />
+  </view>
+
   <!-- 提交按钮 -->
   <view class="submit-bar">
     <button class="btn-primary submit-btn" bindtap="onSubmit" loading="{{submitting}}" disabled="{{submitting}}">提交订单</button>

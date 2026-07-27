@@ -5,9 +5,11 @@ Page({
     newspapers: [],
     selectedNewspaper: null,
     selectedUserId: '',
+    selectedUserIndex: -1,
     users: [],
     quantities: {},
     remark: '',
+    deliveryAddress: '',
     isAdmin: false,
     loading: true,
     submitting: false,
@@ -17,6 +19,14 @@ Page({
     const app = getApp();
     const isAdmin = app.globalData.isAdmin || wx.getStorageSync('role') === 'admin';
     this.setData({ isAdmin });
+
+    // 加载默认地址
+    if (!isAdmin) {
+      api.getProfile().then(res => {
+        const subscriber = res.subscriber || {};
+        this.setData({ deliveryAddress: subscriber.address || '' });
+      }).catch(() => {});
+    }
 
     const preselectId = options.newspaperId;
     this.loadNewspapers(preselectId);
@@ -90,6 +100,10 @@ Page({
     this.setData({ remark: e.detail.value });
   },
 
+  onAddressInput(e) {
+    this.setData({ deliveryAddress: e.detail.value });
+  },
+
   getSubtotal(id) {
     const newspaper = this.data.newspapers.find(n => n.id === id);
     const qty = this.data.quantities[id] || 0;
@@ -115,7 +129,7 @@ Page({
       return;
     }
 
-    const data = { items, remark: this.data.remark };
+    const data = { items, remark: this.data.remark, delivery_address: this.data.deliveryAddress };
     if (this.data.isAdmin && this.data.selectedUserId) {
       data.userId = this.data.selectedUserId;
     }

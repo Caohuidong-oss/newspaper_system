@@ -39,6 +39,15 @@
             </div>
             {% endif %}
 
+            {# ========== 配送地址（可临时修改） ========== #}
+            <div class="card border-0 mb-4" style="background: linear-gradient(135deg, #f5f7fa, #fff);">
+                <div class="card-body py-3">
+                    <label for="delivery_address" class="form-label fw-bold small">📍 配送地址 <span class="text-muted small fw-normal">（默认您注册时的地址，可临时修改）</span></label>
+                    <textarea class="form-control" id="delivery_address" name="delivery_address" rows="2"
+                              placeholder="请填写本次订单的配送地址">{{ default_address }}</textarea>
+                </div>
+            </div>
+
             {# ========== 选择报刊 ========== #}
             <h5 class="mb-3">📰 选择报刊及数量</h5>
             <div class="row g-3">

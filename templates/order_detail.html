@@ -57,7 +57,7 @@
                 </div>
                 <div class="d-flex align-items-start">
                     <span class="text-muted" style="min-width: 70px;">📍 地址</span>
-                    <span>{{ order.user.address or '未填写' }}</span>
+                    <span>{{ order.delivery_address or order.user.address or '未填写' }}</span>
                 </div>
             </div>
         </div>

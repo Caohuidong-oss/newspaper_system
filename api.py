@@ -123,6 +123,7 @@ def order_to_dict(o):
         'status': o.status,
         'status_text': {1: '待处理', 2: '已确认', 3: '已取消'}.get(o.status, '未知'),
         'note': o.note or '',
+        'delivery_address': o.delivery_address or '',
         'subscriptions': [{
             'newspaper_id': s.newspaper_id,
             'newspaper_name': s.newspaper.name if s.newspaper else '',
@@ -378,6 +379,7 @@ def api_order_create():
         total_amount=total,
         status=1,
         note=data.get('note', ''),
+        delivery_address=data.get('delivery_address', ''),
         order_date=datetime.now(),
     )
     db.session.add(order)

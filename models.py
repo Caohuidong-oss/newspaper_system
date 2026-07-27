@@ -35,6 +35,7 @@ class Order(db.Model):
     total_amount = db.Column(db.Numeric(12,2), nullable=False, default=0)
     status = db.Column(db.SmallInteger, default=1)
     note = db.Column(db.String(500), default='')  # 订单备注
+    delivery_address = db.Column(db.String(500), default='')  # 配送地址（创建订单时确定）
 
     subscriptions = db.relationship('Subscription', backref='order', lazy=True, cascade='all, delete-orphan')
 

@@ -713,7 +713,8 @@ def order_add():
             return redirect(url_for('order_add'))
         
         order = Order(user_id=user_id, total_amount=total, status=1,
-                      note=request.form.get('note', '').strip())
+                      note=request.form.get('note', '').strip(),
+                      delivery_address=request.form.get('delivery_address', '').strip())
         db.session.add(order)
         db.session.flush()
         for item in items:
@@ -730,7 +731,8 @@ def order_add():
     
     users = User.query.all() if session.get('role') == 'admin' else [current_user] if current_user else []
     newspapers = Newspaper.query.all()
-    return render_template('order_form.html', users=users, newspapers=newspapers)
+    default_address = current_user.address if current_user else ''
+    return render_template('order_form.html', users=users, newspapers=newspapers, default_address=default_address)
 
 @app.route('/order/cancel/<int:order_id>', methods=['POST'])
 @login_required
