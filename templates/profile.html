@@ -20,6 +20,7 @@
             </div>
         </div>
 
+        {% if session.role != 'admin' %}
         <div class="row g-2 mt-2">
             <div class="col-6">
                 <div class="card text-center shadow-sm">
@@ -40,11 +41,14 @@
                 </div>
             </div>
         </div>
+        {% endif %}
 
         <div class="d-grid gap-2 mt-3">
             <a href="{{ url_for('change_password') }}" class="btn btn-outline-warning">🔒 修改密码</a>
             <a href="{{ url_for('set_security') }}" class="btn btn-outline-info">🔐 设置安全问题</a>
+            {% if session.role != 'admin' %}
             <a href="{{ url_for('orders') }}" class="btn btn-outline-primary">📦 我的订单</a>
+            {% endif %}
         </div>
     </div>
 
