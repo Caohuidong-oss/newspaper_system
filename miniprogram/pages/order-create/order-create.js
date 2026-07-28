@@ -40,7 +40,7 @@ Page({
     this.setData({ loading: true });
     api.getNewspapers()
       .then(res => {
-        const list = Array.isArray(res) ? res : (res.list || res.records || []);
+        const list = Array.isArray(res) ? res : (res.newspapers || res.list || res.records || []);
         const quantities = {};
         list.forEach(n => { quantities[n.id] = 0; });
 
@@ -63,7 +63,7 @@ Page({
   loadUsers() {
     api.getUsers()
       .then(res => {
-        const list = Array.isArray(res) ? res : (res.list || res.records || []);
+        const list = Array.isArray(res) ? res : (res.users || res.list || res.records || []);
         this.setData({ users: list });
       })
       .catch(() => {});
