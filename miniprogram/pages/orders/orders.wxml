@@ -18,16 +18,21 @@
   <view wx:else class="order-list">
     <view class="order-card card" wx:for="{{orders}}" wx:key="id"
           data-id="{{item.id}}" bindtap="goToDetail">
+      <!-- 头部：编号 + 状态勋章 -->
       <view class="order-header">
-        <text class="order-id">订单 #{{item.id}}</text>
-        <text class="badge {{item.statusClass}}">{{item.statusText}}</text>
+        <text class="order-id">#{{item.id}}</text>
+        <text class="badge {{item.statusClass}}">
+          <text class="status-dot {{item.statusClass}}"></text>
+          {{item.statusText}}
+        </text>
       </view>
+      <!-- 主体：订户 + 日期 + 金额 -->
       <view class="order-body">
-        <text class="order-user">订户：{{item.user_name || item.username || '未知'}}</text>
-        <text class="order-date">{{item.dateShort}}</text>
-      </view>
-      <view class="order-footer">
-        <text class="order-amount">?{{item.totalAmount}}</text>
+        <view class="order-info">
+          <text class="order-user">👤 {{item.user_name || '未知'}}</text>
+          <text class="order-date">{{item.dateShort}}</text>
+        </view>
+        <text class="order-amount">¥{{item.totalAmount}}</text>
       </view>
     </view>
   </view>

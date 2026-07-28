@@ -1,6 +1,6 @@
-﻿﻿<view class="newspapers-container">
+﻿<view class="newspapers-container">
   <!-- 搜索栏 -->
-  <view class="search-bar card">
+  <view class="search-bar">
     <input class="search-input" placeholder="搜索报刊名称..." value="{{keyword}}" bindinput="onKeywordInput" />
     <button class="search-btn" bindtap="onSearch">搜索</button>
   </view>
@@ -13,12 +13,17 @@
 
   <!-- 报刊网格 -->
   <view wx:else class="newspapers-grid">
-    <view class="newspaper-card card" wx:for="{{newspapers}}" wx:key="id" data-id="{{item.id}}" bindtap="goToCreateOrder">
-      <image class="newspaper-image" src="{{item.image_url || '/images/default-newspaper.png'}}" mode="aspectFill" />
+    <view class="newspaper-card" wx:for="{{newspapers}}" wx:key="id" data-id="{{item.id}}" bindtap="goToCreateOrder">
+      <view class="image-wrap">
+        <image class="newspaper-image" src="{{item.image_url || ''}}" mode="aspectFill" />
+      </view>
       <view class="newspaper-info">
         <text class="newspaper-name">{{item.name}}</text>
         <text class="newspaper-type badge badge-pending">{{item.type || '其他'}}</text>
-        <text class="newspaper-price">¥{{item.price}}<text class="price-unit">/期</text></text>
+        <view class="price-line">
+          <text class="newspaper-price">¥{{item.price}}</text>
+          <text class="price-unit">/期</text>
+        </view>
       </view>
     </view>
   </view>

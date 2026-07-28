@@ -117,4 +117,8 @@ Page({
       },
     });
   },
+
+  navigateBack() {
+    wx.navigateBack();
+  },
 });

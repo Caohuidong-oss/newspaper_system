@@ -5,20 +5,21 @@
 .tabs {
   display: flex;
   background: #fff;
-  padding: 16rpx 20rpx;
-  margin: 20rpx;
-  border-radius: 16rpx;
+  padding: 12rpx 16rpx;
+  margin: 16rpx;
+  border-radius: 40rpx;
   box-shadow: 0 2rpx 12rpx rgba(0,0,0,.06);
 }
 
 .tab {
   flex: 1;
   text-align: center;
-  padding: 12rpx 0;
+  padding: 10rpx 0;
   font-size: 26rpx;
   color: #999;
-  border-radius: 30rpx;
+  border-radius: 40rpx;
   font-weight: 600;
+  transition: none;
 }
 
 .tab-active {
@@ -27,8 +28,8 @@
 }
 
 .order-card {
-  margin: 12rpx 20rpx;
-  padding: 24rpx;
+  margin: 12rpx 16rpx;
+  padding: 20rpx 24rpx;
   background: #fff;
   border-radius: 16rpx;
   box-shadow: 0 2rpx 12rpx rgba(0,0,0,.06);
@@ -55,9 +56,15 @@
   align-items: center;
 }
 
+.order-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
 .order-user {
-  font-size: 24rpx;
-  color: #666;
+  font-size: 26rpx;
+  color: #555;
 }
 
 .order-date {
@@ -65,23 +72,44 @@
   color: #999;
 }
 
-.order-footer {
-  margin-top: 12rpx;
-  padding-top: 12rpx;
-  border-top: 1rpx solid #f5f5f5;
-  display: flex;
-  justify-content: flex-end;
-}
-
 .order-amount {
-  font-size: 30rpx;
+  font-size: 32rpx;
   font-weight: 700;
   color: #e74c3c;
+  flex-shrink: 0;
 }
+
+/* 状态小圆点 */
+.status-dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 6rpx;
+  vertical-align: middle;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.badge-pending { background: #fff3cd; color: #856404; }
+.badge-pending .status-dot { background: #ffc107; }
+.badge-confirmed { background: #d4edda; color: #155724; }
+.badge-confirmed .status-dot { background: #28a745; }
+.badge-cancelled { background: #f8d7da; color: #721c24; }
+.badge-cancelled .status-dot { background: #dc3545; }
+.badge-admin { background: #dc3545; color: #fff; }
+.badge-user { background: #0d6efd; color: #fff; }
 
 .loading-text, .empty-text {
   text-align: center;
-  padding: 60rpx 0;
+  padding: 80rpx 0;
   color: #999;
   font-size: 28rpx;
 }
