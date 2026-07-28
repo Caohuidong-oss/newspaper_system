@@ -17,11 +17,6 @@
     "backgroundColor": "#f5f7fa"
   },
   "lazyCodeLoading": "requiredComponents",
-  "permission": {
-    "userLocation": {
-      "desc": "用于查找附近的报刊投递点"
-    }
-  },
   "tabBar": {
     "color": "#999",
     "selectedColor": "#667eea",
