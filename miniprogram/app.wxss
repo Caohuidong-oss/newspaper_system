@@ -84,3 +84,4 @@ page {
 .gradient-green { background: linear-gradient(135deg, #11998e, #38ef7d); }
 .gradient-pink { background: linear-gradient(135deg, #f093fb, #f5576c); }
 .gradient-blue { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+.gradient-red { background: linear-gradient(135deg, #f5576c, #ff6b6b); }

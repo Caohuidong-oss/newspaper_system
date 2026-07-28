@@ -2,56 +2,68 @@
   <!-- 欢迎横幅 -->
   <view class="welcome-banner">
     <view class="welcome-text">
-      <text class="welcome-greeting">欢迎回来，{{username}}</text>
-      <text class="welcome-role badge {{isAdmin ? 'badge-admin' : 'badge-user'}}">{{isAdmin ? '管理员' : '订户'}}</text>
+      <text class="welcome-label">当前登录：</text>
+      <text class="welcome-username">{{username}}</text>
+      <text class="welcome-role badge {{isAdmin ? 'badge-admin' : 'badge-user'}}">{{isAdmin ? '⚙️ 管理员' : '📖 订阅者'}}</text>
     </view>
-    <text class="welcome-desc">管理您的报刊订阅</text>
+    <text class="welcome-desc">高效管理订户、报刊目录、订单数据</text>
+    <view class="welcome-actions">
+      <view class="welcome-btn primary" wx:if="{{!isAdmin}}" bindtap="goToNewspapers">📦 我要订阅</view>
+      <view class="welcome-btn outline" bindtap="goToStatistics">📊 查看统计</view>
+    </view>
   </view>
 
-  <!-- 统计卡片 -->
+  <!-- 统计卡片（管理员 4 张, 普通 3 张） -->
   <view class="stats-grid">
     <block wx:if="{{isAdmin}}">
-      <view class="stats-item" bindtap="goToStatistics">
+      <view class="stats-item" bindtap="goToNewspapers">
         <view class="stat-card gradient-purple">
-          <view class="stat-value">{{stats.userCount}}</view>
-          <view class="stat-label">用户数</view>
+          <text class="stat-icon">📰</text>
+          <view class="stat-value">{{stats.newspaperCount}}</view>
+          <view class="stat-label">报刊种类</view>
         </view>
       </view>
-      <view class="stats-item" bindtap="goToNewspapers">
+      <view class="stats-item" bindtap="goToUsers">
         <view class="stat-card gradient-green">
-          <view class="stat-value">{{stats.newspaperCount}}</view>
-          <view class="stat-label">报刊数</view>
+          <text class="stat-icon">👥</text>
+          <view class="stat-value">{{stats.userCount}}</view>
+          <view class="stat-label">订户总数</view>
         </view>
       </view>
       <view class="stats-item" bindtap="goToOrders">
         <view class="stat-card gradient-pink">
+          <text class="stat-icon">📦</text>
           <view class="stat-value">{{stats.orderCount}}</view>
-          <view class="stat-label">订单数</view>
+          <view class="stat-label">订单总数</view>
         </view>
       </view>
-      <view class="stats-item">
-        <view class="stat-card gradient-blue">
-          <view class="stat-value">?{{stats.revenue}}</view>
-          <view class="stat-label">总收入</view>
+      <view class="stats-item" bindtap="goToStatistics">
+        <view class="stat-card gradient-red">
+          <text class="stat-icon">💰</text>
+          <view class="stat-value">¥{{stats.revenue}}</view>
+          <view class="stat-label">总订阅金额</view>
         </view>
       </view>
     </block>
     <block wx:else>
       <view class="stats-item" bindtap="goToNewspapers">
         <view class="stat-card gradient-purple">
+          <text class="stat-icon">📰</text>
           <view class="stat-value">{{stats.newspaperCount}}</view>
-          <view class="stat-label">报刊数</view>
+          <view class="stat-label">报刊种类</view>
         </view>
       </view>
       <view class="stats-item" bindtap="goToOrders">
-        <view class="stat-card gradient-green">
-          <view class="stat-value">{{stats.myOrderCount}}</view>
+        <view class="stat-card gradient-pink">
+          <text class="stat-icon">📦</text>
+          <view class="stat-value">{{stats.orderCount}}</view>
           <view class="stat-label">我的订单</view>
         </view>
       </view>
-      <view class="stats-item">
-        <view class="stat-card gradient-pink">
-          <view class="stat-value">?{{stats.mySpending}}</view>
+      <view class="stats-item" bindtap="goToStatistics">
+        <view class="stat-card gradient-red">
+          <text class="stat-icon">💰</text>
+          <view class="stat-value">¥{{stats.mySpending}}</view>
           <view class="stat-label">我的消费</view>
         </view>
       </view>
@@ -60,20 +72,52 @@
 
   <!-- 最近订单 -->
   <view class="card">
-    <view class="card-header">最近订单</view>
+    <view class="card-header flex-row">
+      <text class="card-title">🕐 最近订单</text>
+      <text class="card-link" bindtap="goToOrders">查看全部</text>
+    </view>
     <view wx:if="{{loading}}" class="loading-text">加载中...</view>
-    <view wx:elif="{{recentOrders.length === 0}}" class="empty-text">暂无订单</view>
+    <view wx:elif="{{recentOrders.length === 0}}" class="empty-text">📭 暂无订单</view>
     <view wx:else class="order-list">
-      <view class="order-item" wx:for="{{recentOrders}}" wx:key="id" data-id="{{item.id}}" bindtap="goToOrders">
+      <view class="order-row" wx:for="{{recentOrders}}" wx:key="id" data-id="{{item.id}}" bindtap="goToOrders">
+        <view class="order-icon">🧾</view>
         <view class="order-info">
-          <text class="order-id">#{{item.id}}</text>
-          <text class="order-date">{{item.dateShort}}</text>
+          <view class="order-line1">
+            <text class="order-id">#{{item.id}}</text>
+            <text class="badge {{item.statusClass}}"><text class="status-dot {{item.statusClass}}"></text>{{item.statusText}}</text>
+          </view>
+          <view class="order-line2">👤 {{item.userName}} · 🕐 {{item.dateShort}} {{item.timeShort}}</view>
         </view>
-        <view class="order-meta">
-          <text class="order-amount">?{{item.totalAmount}}</text>
-          <text class="badge {{item.statusClass}}">{{item.statusText}}</text>
-        </view>
+        <text class="order-amount">¥{{item.totalAmount}}</text>
       </view>
+    </view>
+  </view>
+
+  <!-- 热门报刊 -->
+  <view class="card">
+    <view class="card-header flex-row">
+      <text class="card-title">🔥 热门报刊</text>
+      <text class="card-link" bindtap="goToNewspapers">全部</text>
+    </view>
+    <view wx:if="{{topNewspapers.length === 0}}" class="empty-text">暂无订阅数据</view>
+    <view wx:else>
+      <view class="top-paper-row" wx:for="{{topNewspapers}}" wx:key="name">
+        <text class="top-paper-name">{{item.name}}</text>
+        <text class="top-paper-qty">{{item.count}} 份</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷操作 -->
+  <view class="card">
+    <view class="card-header">
+      <text class="card-title">⚡ 快捷操作</text>
+    </view>
+    <view class="quick-actions">
+      <view wx:if="{{!isAdmin}}" class="quick-btn primary" bindtap="goToNewspapers">📦 我要订阅</view>
+      <view class="quick-btn info" bindtap="goToOrders">🔍 查询订单</view>
+      <view class="quick-btn danger" bindtap="goToStatistics">📊 查看统计</view>
+      <view wx:if="{{isAdmin}}" class="quick-btn warning" bindtap="goToNewspapers">📰 添加报刊</view>
     </view>
   </view>
 </view>

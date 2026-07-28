@@ -17,6 +17,7 @@ Page({
       mySpending: '0.00',
     },
     recentOrders: [],
+    topNewspapers: [],
     loading: true,
   },
 
@@ -46,6 +47,7 @@ Page({
             myOrderCount: res.total_orders || 0,
             mySpending: Number(res.total_revenue || 0).toFixed(2),
           },
+          topNewspapers: (res.top_newspapers || []).slice(0, 5),
         });
       })
       .catch(err => {
@@ -55,11 +57,12 @@ Page({
     // 加载最近订单
     api.getOrders()
       .then(data => {
-        // api.getOrders 返回 {orders: [...], total: N} 或直接数组
         const list = Array.isArray(data) ? data : (data.orders || []);
         const recent = list.slice(0, 5).map(o => ({
           id: o.order_id,
-          dateShort: (o.order_date || '').substring(0, 10),
+          userName: (o.user && o.user.real_name) || o.user_real_name || '',
+          dateShort: o.date_short || (o.order_date || '').substring(0, 10),
+          timeShort: o.time_short || (o.order_date || '').substring(11, 16),
           totalAmount: Number(o.total_amount || 0).toFixed(2),
           status: o.status,
           statusText: STATUS_TEXT[o.status] || '',
@@ -73,15 +76,13 @@ Page({
       });
   },
 
-  goToNewspapers() {
-    wx.switchTab({ url: '/pages/newspapers/newspapers' });
-  },
+  // 统计卡片跳转（管理员）
+  goToNewspapersAdmin() { wx.switchTab({ url: '/pages/newspapers/newspapers' }); },
+  goToUsers() { wx.navigateTo({ url: '/pages/statistics/statistics' }); },  // 简化处理
+  goToOrdersAdmin() { wx.switchTab({ url: '/pages/orders/orders' }); },
+  goToStatistics() { wx.navigateTo({ url: '/pages/statistics/statistics' }); },
 
-  goToOrders() {
-    wx.switchTab({ url: '/pages/orders/orders' });
-  },
-
-  goToStatistics() {
-    wx.navigateTo({ url: '/pages/statistics/statistics' });
-  },
+  // 统计卡片跳转（普通）
+  goToNewspapers() { wx.switchTab({ url: '/pages/newspapers/newspapers' }); },
+  goToOrders() { wx.switchTab({ url: '/pages/orders/orders' }); },
 });
