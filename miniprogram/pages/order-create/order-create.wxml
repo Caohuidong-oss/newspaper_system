@@ -1,4 +1,4 @@
-﻿<view class="create-container">
+﻿﻿<view class="create-container">
   <!-- 管理员选订户 -->
   <view class="card" wx:if="{{isAdmin}}">
     <view class="card-header">选择订户</view>
@@ -20,7 +20,7 @@
             wx:for="{{newspapers}}" wx:key="id" data-id="{{item.id}}">
         <view class="item-info">
           <text class="item-name">{{item.name}}</text>
-          <text class="item-price">?{{item.price}}/期</text>
+          <text class="item-price">¥{{item.price}}/期</text>
         </view>
         <view class="qty-stepper">
           <view class="stepper-btn" data-id="{{item.id}}" data-delta="-1" bindtap="onQtyChange">?</view>
@@ -35,7 +35,7 @@
   <view class="card total-card">
     <view class="total-row">
       <text class="total-label">合计</text>
-      <text class="total-amount">?{{totalAmount}}</text>
+      <text class="total-amount">¥{{totalAmount}}</text>
     </view>
   </view>
 

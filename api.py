@@ -109,7 +109,7 @@ def newspaper_to_dict(n):
         'period': n.period or '',
         'description': n.description or '',
         'image': n.image or '',
-        'image_url': f"/static/uploads/{n.image}" if n.image else '',
+        'image_url': f"https://web-production-8197.up.railway.app/static/uploads/{n.image}" if n.image else '',
     }
 
 def order_to_dict(o):

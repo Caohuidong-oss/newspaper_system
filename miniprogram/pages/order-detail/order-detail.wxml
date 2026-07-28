@@ -1,55 +1,55 @@
-<view class="order-detail-container">
-  <view wx:if="{{loading}}" class="loading-text">加载中...</view>
-
-  <block wx:else>
-    <!-- 头部状态 -->
-    <view class="status-header card">
-      <text class="badge {{order.statusClass}} status-badge">{{order.statusText}}</text>
-      <text class="order-number">订单号 #{{order.order_id}}</text>
-      <text class="order-date">{{order.order_date}}</text>
-    </view>
-
-    <!-- 订户信息 -->
-    <view class="card">
-      <view class="card-header">订户信息</view>
-      <view class="info-row">
-        <text class="info-label">姓名</text>
-        <text class="info-value">{{order.user_name || '未知'}}</text>
-      </view>
-      <view class="info-row">
-        <text class="info-label">电话</text>
-        <text class="info-value">{{order.user_phone || '-'}}</text>
-      </view>
-    </view>
-
-    <!-- 商品明细 -->
-    <view class="card">
-      <view class="card-header">订阅明细</view>
-      <view wx:if="{{order.subscriptions.length === 0}}" class="empty-text">暂无明细</view>
-      <view wx:else>
-        <view class="item-row" wx:for="{{order.subscriptions}}" wx:key="newspaper_id">
-          <text class="item-name">{{item.newspaper_name}}</text>
-          <text class="item-qty">x {{item.quantity}}</text>
-          <text class="item-amount">?{{item.subtotal}}</text>
-        </view>
-      </view>
-
-      <view class="total-row" wx:if="{{order.subscriptions.length > 0}}">
-        <text class="total-label">合计</text>
-        <text class="total-amount">?{{order.total_amount}}</text>
-      </view>
-    </view>
-
-    <!-- 备注 -->
-    <view class="card" wx:if="{{order.note}}">
-      <view class="card-header">备注</view>
-      <text class="note-text">{{order.note}}</text>
-    </view>
-
-    <!-- 操作按钮 -->
-    <view class="action-bar">
-      <button wx:if="{{isAdmin && order.status === 1}}" class="btn-confirm" bindtap="onConfirm">确认订单</button>
-      <button wx:if="{{order.status === 1}}" class="btn-cancel" bindtap="onCancel">取消订单</button>
-    </view>
-  </block>
-</view>
+﻿<view class="order-detail-container">
+  <view wx:if="{{loading}}" class="loading-text">加载中...</view>
+
+  <block wx:else>
+    <!-- 头部状态 -->
+    <view class="status-header card">
+      <text class="badge {{order.statusClass}} status-badge">{{order.statusText}}</text>
+      <text class="order-number">订单号 #{{order.order_id}}</text>
+      <text class="order-date">{{order.order_date}}</text>
+    </view>
+
+    <!-- 订户信息 -->
+    <view class="card">
+      <view class="card-header">订户信息</view>
+      <view class="info-row">
+        <text class="info-label">姓名</text>
+        <text class="info-value">{{order.user_name || '未知'}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">电话</text>
+        <text class="info-value">{{order.user_phone || '-'}}</text>
+      </view>
+    </view>
+
+    <!-- 商品明细 -->
+    <view class="card">
+      <view class="card-header">订阅明细</view>
+      <view wx:if="{{order.subscriptions.length === 0}}" class="empty-text">暂无明细</view>
+      <view wx:else>
+        <view class="item-row" wx:for="{{order.subscriptions}}" wx:key="newspaper_id">
+          <text class="item-name">{{item.newspaper_name}}</text>
+          <text class="item-qty">x {{item.quantity}}</text>
+          <text class="item-amount">¥{{item.subtotal}}</text>
+        </view>
+      </view>
+
+      <view class="total-row" wx:if="{{order.subscriptions.length > 0}}">
+        <text class="total-label">合计</text>
+        <text class="total-amount">¥{{order.total_amount}}</text>
+      </view>
+    </view>
+
+    <!-- 备注 -->
+    <view class="card" wx:if="{{order.note}}">
+      <view class="card-header">备注</view>
+      <text class="note-text">{{order.note}}</text>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="action-bar">
+      <button wx:if="{{isAdmin && order.status === 1}}" class="btn-confirm" bindtap="onConfirm">确认订单</button>
+      <button wx:if="{{order.status === 1}}" class="btn-cancel" bindtap="onCancel">取消订单</button>
+    </view>
+  </block>
+</view>

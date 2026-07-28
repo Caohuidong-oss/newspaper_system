@@ -1,4 +1,4 @@
-﻿<view class="newspapers-container">
+﻿﻿<view class="newspapers-container">
   <!-- 搜索栏 -->
   <view class="search-bar card">
     <input class="search-input" placeholder="搜索报刊名称..." value="{{keyword}}" bindinput="onKeywordInput" />
@@ -18,7 +18,7 @@
       <view class="newspaper-info">
         <text class="newspaper-name">{{item.name}}</text>
         <text class="newspaper-type badge badge-pending">{{item.type || '其他'}}</text>
-        <text class="newspaper-price">?{{item.price}}<text class="price-unit">/期</text></text>
+        <text class="newspaper-price">¥{{item.price}}<text class="price-unit">/期</text></text>
       </view>
     </view>
   </view>
