@@ -67,7 +67,7 @@
 
       <view class="register-tips">
         <text>已有账号？</text>
-        <text class="link" bindtap="onBackToLogin">立即登录 →</text>
+        <text class="link" bindtap="onBackToLogin">立即登录</text>
       </view>
     </view>
   </view>
