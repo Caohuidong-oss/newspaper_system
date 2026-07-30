@@ -31,9 +31,14 @@
                 <div class="d-flex justify-content-between align-items-start mb-2">
                     <h2 class="mb-0">📰 {{ newspaper.name }}</h2>
                     {% if session.role == 'admin' %}
-                        <div>
+                        <div class="d-flex gap-1">
                             <a href="{{ url_for('newspaper_edit', newspaper_id=newspaper.newspaper_id) }}"
                                class="btn btn-sm btn-warning">✏️ 编辑</a>
+                            {% if newspaper.is_available %}
+                            <a href="{{ url_for('newspaper_take_down', newspaper_id=newspaper.newspaper_id) }}"
+                               class="btn btn-sm btn-danger"
+                               onclick="return confirm('确定下架「{{ newspaper.name }}」？');">⬇️ 下架</a>
+                            {% endif %}
                         </div>
                     {% endif %}
                 </div>

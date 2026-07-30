@@ -668,11 +668,26 @@ def newspaper_delete(newspaper_id):
     # 检查是否有订阅记录，有则拒绝删除
     sub_count = Subscription.query.filter_by(newspaper_id=newspaper_id).count()
     if sub_count > 0:
-        flash(f'该报刊已有 {sub_count} 条订阅记录，无法删除（建议下架而非删除）', 'danger')
+        flash(f'该报刊已有 {sub_count} 条订阅记录，无法删除（建议使用下架功能）', 'danger')
         return redirect(url_for('newspapers'))
     db.session.delete(newspaper)
     db.session.commit()
-    flash('报刊已删除！', 'danger')
+    flash('报刊已永久删除！', 'danger')
+    return redirect(url_for('newspapers'))
+
+
+@app.route('/newspaper/take_down/<int:newspaper_id>', methods=['GET', 'POST'])
+@admin_required
+def newspaper_take_down(newspaper_id):
+    """下架报刊：将截止日期设为昨天，用户无法再订阅"""
+    newspaper = Newspaper.query.get_or_404(newspaper_id)
+    from datetime import date as dt_date
+    newspaper.available_until = dt_date.today()
+    # 如果之前没有上架日期，设为今天
+    if not newspaper.available_from:
+        newspaper.available_from = dt_date.today()
+    db.session.commit()
+    flash(f'报刊「{newspaper.name}」已下架，用户将无法再订阅', 'warning')
     return redirect(url_for('newspapers'))
 
 # ==================== 订单管理 ====================

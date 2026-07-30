@@ -98,11 +98,13 @@
                 <div class="card-footer bg-white border-top-0 d-flex gap-2 pt-0">
                     <a href="{{ url_for('newspaper_edit', newspaper_id=n.newspaper_id) }}"
                        class="btn btn-sm btn-outline-warning rounded-pill flex-fill">✏️ 编辑</a>
-                    <form action="{{ url_for('newspaper_delete', newspaper_id=n.newspaper_id) }}"
-                          method="POST" style="display:inline; flex:1;"
-                          onsubmit="return confirm('确定要删除该报刊吗？');">
-                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill w-100">🗑️ 删除</button>
-                    </form>
+                    {% if n.is_available %}
+                    <a href="{{ url_for('newspaper_take_down', newspaper_id=n.newspaper_id) }}"
+                       class="btn btn-sm btn-outline-danger rounded-pill flex-fill"
+                       onclick="return confirm('确定下架「{{ n.name }}」吗？下架后用户将无法订阅');">⬇️ 下架</a>
+                    {% else %}
+                    <span class="btn btn-sm btn-outline-secondary rounded-pill flex-fill disabled">✅ 已下架</span>
+                    {% endif %}
                 </div>
                 {% else %}
                 <div class="card-footer bg-white border-top-0 pt-0">
