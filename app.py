@@ -61,7 +61,7 @@ def admin_required(f):
     def decorated_function(*args, **kwargs):
         if not session.get('user_id'):
             flash('请先登录', 'warning')
-            return redirect(url_for('login'))
+            return redirect(url_for('login', next=request.url))
         if session.get('role') != 'admin':
             flash('需要管理员权限', 'danger')
             return redirect(url_for('index'))
@@ -494,7 +494,7 @@ def user_edit(user_id):
         return redirect(url_for('users'))
     return render_template('user_form.html', user=user)
 
-@app.route('/user/delete/<int:user_id>', methods=['POST'])
+@app.route('/user/delete/<int:user_id>', methods=['GET', 'POST'])
 @admin_required
 def user_delete(user_id):
     user = User.query.get_or_404(user_id)
@@ -629,7 +629,7 @@ def newspaper_edit(newspaper_id):
         return redirect(url_for('newspapers'))
     return render_template('newspaper_form.html', newspaper=newspaper)
 
-@app.route('/newspaper/delete/<int:newspaper_id>', methods=['POST'])
+@app.route('/newspaper/delete/<int:newspaper_id>', methods=['GET', 'POST'])
 @admin_required
 def newspaper_delete(newspaper_id):
     newspaper = Newspaper.query.get_or_404(newspaper_id)
