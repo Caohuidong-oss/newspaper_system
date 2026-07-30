@@ -37,6 +37,18 @@
                             <input type="text" class="form-control" id="period" name="period"
                                    value="{{ newspaper.period if newspaper else '' }}" placeholder="如：日、周、月">
                         </div>
+                        <div class="col-md-6">
+                            <label for="available_from" class="form-label small fw-bold text-muted">上架日期</label>
+                            <input type="date" class="form-control" id="available_from" name="available_from"
+                                   value="{{ newspaper.available_from.strftime('%Y-%m-%d') if newspaper and newspaper.available_from else '' }}">
+                            <small class="text-muted">留空=立即上架</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="available_until" class="form-label small fw-bold text-muted">截止日期</label>
+                            <input type="date" class="form-control" id="available_until" name="available_until"
+                                   value="{{ newspaper.available_until.strftime('%Y-%m-%d') if newspaper and newspaper.available_until else '' }}">
+                            <small class="text-muted">留空=永久可订 | 设过去日期=下架</small>
+                        </div>
                         <div class="col-12">
                             <label for="image" class="form-label small fw-bold text-muted">报刊图片</label>
                             <input type="file" class="form-control" id="image" name="image"

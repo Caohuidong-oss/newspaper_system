@@ -118,6 +118,28 @@ def query_order_stats(base_query=None):
         total_rev = db.session.query(func.sum(Subscription.subtotal)).scalar() or 0
     return total_qty, float(total_rev)
 
+
+def filter_available(query, for_admin=False):
+    """过滤出当前可订阅的报刊（管理员看全部）"""
+    if for_admin:
+        return query
+    today = datetime.now().date()
+    return query.filter(
+        db.or_(Newspaper.available_from.is_(None), Newspaper.available_from <= today)
+    ).filter(
+        db.or_(Newspaper.available_until.is_(None), Newspaper.available_until >= today)
+    )
+
+
+def _parse_date(s):
+    """解析 'YYYY-MM-DD' 字符串为 date 对象"""
+    if not s or not s.strip():
+        return None
+    try:
+        return datetime.strptime(s.strip(), '%Y-%m-%d').date()
+    except (ValueError, TypeError):
+        return None
+
 # ==================== 认证路由 ====================
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -564,12 +586,14 @@ def admin_set_role(user_id):
 def newspapers():
     keyword = request.args.get('keyword', '').strip()
     page = request.args.get('page', 1, type=int)
-    per_page = 12  # 报刊每页少一点，卡片布局更舒服
+    per_page = 12
+    is_admin = session.get('role') == 'admin'
 
+    query = Newspaper.query
     if keyword:
-        query = Newspaper.query.filter(Newspaper.name.contains(keyword))
-    else:
-        query = Newspaper.query
+        query = query.filter(Newspaper.name.contains(keyword))
+    if not is_admin:
+        query = filter_available(query)
     pagination = query.order_by(Newspaper.newspaper_id).paginate(page=page, per_page=per_page, error_out=False)
     all_newspapers = pagination.items
 
@@ -595,7 +619,9 @@ def newspaper_add():
             price=price,
             period=period,
             description=description,
-            image=image or ''
+            image=image or '',
+            available_from=_parse_date(request.form.get('available_from')),
+            available_until=_parse_date(request.form.get('available_until')),
         )
         db.session.add(new_newspaper)
         db.session.commit()
@@ -613,11 +639,12 @@ def newspaper_edit(newspaper_id):
         newspaper.price = request.form.get('price')
         newspaper.period = request.form.get('period', '')
         newspaper.description = request.form.get('description', '')
+        newspaper.available_from = _parse_date(request.form.get('available_from'))
+        newspaper.available_until = _parse_date(request.form.get('available_until'))
         
         # 处理图片上传（有新图则替换）
         uploaded = save_newspaper_image(request.files.get('image'))
         if uploaded:
-            # 删除旧图片
             if newspaper.image:
                 old_path = os.path.join(UPLOAD_FOLDER, newspaper.image)
                 if os.path.exists(old_path):
@@ -769,7 +796,7 @@ def order_add():
         return redirect(url_for('orders'))
     
     users = User.query.all() if session.get('role') == 'admin' else [current_user] if current_user else []
-    newspapers = Newspaper.query.all()
+    newspapers = filter_available(Newspaper.query).order_by(Newspaper.newspaper_id).all()
     default_address = current_user.address if current_user else ''
     return render_template('order_form.html', users=users, newspapers=newspapers, default_address=default_address)
 

@@ -45,6 +45,21 @@
                     {% if newspaper.period %}
                         <span class="badge bg-secondary">📅 {{ newspaper.period }}</span>
                     {% endif %}
+                    {% if newspaper.status_text == '已下架' %}
+                        <span class="badge bg-danger">已下架</span>
+                    {% elif newspaper.status_text == '待上架' %}
+                        <span class="badge bg-warning text-dark">待上架</span>
+                    {% elif newspaper.status_text == '订阅中' %}
+                        <span class="badge bg-success">订阅中</span>
+                    {% endif %}
+                    {% if session.role == 'admin' %}
+                        {% if newspaper.available_from %}
+                            <span class="badge bg-light text-muted border">上架: {{ newspaper.available_from }}</span>
+                        {% endif %}
+                        {% if newspaper.available_until %}
+                            <span class="badge bg-light text-muted border">截止: {{ newspaper.available_until }}</span>
+                        {% endif %}
+                    {% endif %}
                 </div>
 
                 <div class="row g-3 my-4">

@@ -68,12 +68,25 @@
                         <h5 class="card-title mb-0 text-dark">{{ n.name }}</h5>
                         <span class="fs-5 fw-bold text-danger">¥{{ n.price }}</span>
                     </div>
-                    <div class="d-flex gap-1 mb-2">
+                    <div class="d-flex gap-1 mb-2 flex-wrap">
                         {% if n.type %}
                             <span class="badge bg-info bg-opacity-10 text-info">{{ n.type }}</span>
                         {% endif %}
                         {% if n.period %}
                             <span class="badge bg-secondary bg-opacity-10 text-secondary">📅 {{ n.period }}</span>
+                        {% endif %}
+                        {% if session.role == 'admin' %}
+                            {% if n.available_from %}
+                                <span class="badge bg-light text-muted border small">上架: {{ n.available_from }}</span>
+                            {% endif %}
+                            {% if n.available_until %}
+                                <span class="badge bg-light text-muted border small">截止: {{ n.available_until }}</span>
+                            {% endif %}
+                            {% if n.status_text == '已下架' %}
+                                <span class="badge bg-danger">已下架</span>
+                            {% elif n.status_text == '待上架' %}
+                                <span class="badge bg-warning text-dark">待上架</span>
+                            {% endif %}
                         {% endif %}
                     </div>
                     <p class="card-text small text-muted mb-0 text-truncate">

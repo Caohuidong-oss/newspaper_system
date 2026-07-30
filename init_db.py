@@ -90,6 +90,25 @@ with app.app_context():
             print(f"{_table}.{_col} 外键迁移跳过: {e}")
             db.session.rollback()
 
+    # 1.8 在线迁移：给 newspaper 表加上架/截止日期列（兼容旧表）
+    for _col in ('available_from', 'available_until'):
+        try:
+            result = db.session.execute(text(
+                "SHOW COLUMNS FROM newspaper LIKE :col"
+            ), {'col': _col})
+            if result.fetchone() is None:
+                col_type = 'DATE'
+                db.session.execute(text(
+                    f"ALTER TABLE newspaper ADD COLUMN {_col} {col_type} DEFAULT NULL"
+                ))
+                db.session.commit()
+                print(f"已添加 newspaper.{_col} 列")
+            else:
+                print(f"newspaper.{_col} 列已存在")
+        except Exception as e:
+            print(f"列迁移跳过: {e}")
+            db.session.rollback()
+
     # 2. 如果报刊表为空，导入初始报刊
     if Newspaper.query.count() == 0:
         newspapers = [

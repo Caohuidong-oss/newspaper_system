@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, date
 
 db = SQLAlchemy()
 
@@ -26,6 +26,28 @@ class Newspaper(db.Model):
     image = db.Column(db.String(255), default='')
 
     subscriptions = db.relationship('Subscription', backref='newspaper', lazy=True, cascade='all, delete-orphan')
+
+    # 报刊上架/截止日期（NULL = 不限）
+    available_from = db.Column(db.Date, nullable=True)
+    available_until = db.Column(db.Date, nullable=True)
+
+    @property
+    def is_available(self):
+        """当前是否在有效期内"""
+        today = date.today()
+        if self.available_from and self.available_from > today:
+            return False
+        if self.available_until and self.available_until < today:
+            return False
+        return True
+
+    @property
+    def status_text(self):
+        if not self.is_available:
+            return '已下架'
+        if self.available_from and self.available_from > date.today():
+            return '待上架'
+        return '订阅中'
 
 class Order(db.Model):
     __tablename__ = 'order_main'

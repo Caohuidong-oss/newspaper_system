@@ -9,7 +9,7 @@ import time
 import hmac
 import hashlib
 import base64
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from functools import wraps
 
 import jwt
@@ -102,14 +102,14 @@ def fail(msg='操作失败', code=400):
 
 def newspaper_to_dict(n):
     return {
-        'id': n.newspaper_id,
-        'name': n.name,
-        'type': n.type or '',
-        'price': float(n.price),
-        'period': n.period or '',
-        'description': n.description or '',
-        'image': n.image or '',
+        'id': n.newspaper_id, 'name': n.name, 'type': n.type or '',
+        'price': float(n.price), 'period': n.period or '',
+        'description': n.description or '', 'image': n.image or '',
         'image_url': f"https://web-production-8197.up.railway.app/static/uploads/{n.image}" if n.image else '',
+        'available_from': n.available_from.strftime('%Y-%m-%d') if n.available_from else '',
+        'available_until': n.available_until.strftime('%Y-%m-%d') if n.available_until else '',
+        'is_available': n.is_available,
+        'status_text': n.status_text,
     }
 
 def order_to_dict(o):
@@ -293,11 +293,31 @@ def api_profile():
 
 @api.route('/newspapers', methods=['GET'])
 def api_newspapers():
-    """报刊列表，支持 keyword 搜索"""
+    """报刊列表，支持 keyword 搜索；普通用户只看有效期内报刊"""
     keyword = request.args.get('keyword', '').strip()
+    # 检测 token 判断是否为管理员（可选，前端传给管理员全部报刊）
+    token = None
+    auth_header = request.headers.get('Authorization', '')
+    if auth_header.startswith('Bearer '):
+        token = auth_header[7:]
+    if not token:
+        token = request.args.get('token')
+    is_admin = False
+    if token:
+        payload = parse_jwt(token)
+        if payload and payload.get('role') == 'admin':
+            is_admin = True
+
     query = Newspaper.query
     if keyword:
         query = query.filter(Newspaper.name.contains(keyword))
+    if not is_admin:
+        today = date.today()
+        query = query.filter(
+            db.or_(Newspaper.available_from.is_(None), Newspaper.available_from <= today)
+        ).filter(
+            db.or_(Newspaper.available_until.is_(None), Newspaper.available_until >= today)
+        )
     newspapers = query.order_by(Newspaper.newspaper_id).all()
     return ok({'newspapers': [newspaper_to_dict(n) for n in newspapers], 'total': len(newspapers)})
 
@@ -367,6 +387,8 @@ def api_order_create():
         newspaper = Newspaper.query.get(nid)
         if not newspaper:
             continue
+        if not newspaper.is_available:
+            return fail(f'报刊「{newspaper.name}」已下架或不在订阅期内')
         subtotal = float(newspaper.price) * qty
         total += subtotal
         subs.append(Subscription(newspaper_id=nid, quantity=qty, subtotal=subtotal))
