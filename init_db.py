@@ -27,6 +27,69 @@ with app.app_context():
         print(f"迁移检查跳过: {e}")
         db.session.rollback()
 
+    # 1.6 在线迁移：给 order_main.user_id 的外键加上 ON DELETE CASCADE（兼容旧表）
+    try:
+        result = db.session.execute(text(
+            "SELECT rc.CONSTRAINT_NAME, rc.DELETE_RULE "
+            "FROM information_schema.REFERENTIAL_CONSTRAINTS rc "
+            "JOIN information_schema.KEY_COLUMN_USAGE kcu "
+            "  ON rc.CONSTRAINT_NAME = kcu.CONSTRAINT_NAME "
+            "  AND rc.CONSTRAINT_SCHEMA = kcu.TABLE_SCHEMA "
+            "WHERE kcu.TABLE_SCHEMA = DATABASE() AND kcu.TABLE_NAME = 'order_main' "
+            "AND kcu.COLUMN_NAME = 'user_id' AND kcu.REFERENCED_TABLE_NAME IS NOT NULL"
+        ))
+        row = result.fetchone()
+        if row:
+            fk_name, delete_rule = row
+            if delete_rule.upper() != 'CASCADE':
+                db.session.execute(text(
+                    f"ALTER TABLE order_main DROP FOREIGN KEY {fk_name}, "
+                    f"ADD CONSTRAINT {fk_name} FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE"
+                ))
+                db.session.commit()
+                print(f"已更新 order_main 外键 {fk_name} -> ON DELETE CASCADE")
+            else:
+                print(f"order_main 外键 {fk_name} 已是 ON DELETE CASCADE，无需更新")
+        else:
+            print("未找到 order_main.user_id 外键，跳过")
+    except Exception as e:
+        print(f"外键迁移跳过: {e}")
+        db.session.rollback()
+
+    # 1.7 在线迁移：给 subscription 表的外键加上 ON DELETE CASCADE（兼容旧表）
+    _fk_migrations = [
+        ('subscription', 'order_id', 'order_main(order_id)'),
+        ('subscription', 'newspaper_id', 'newspaper(newspaper_id)'),
+    ]
+    for _table, _col, _ref in _fk_migrations:
+        try:
+            result = db.session.execute(text(
+                "SELECT rc.CONSTRAINT_NAME, rc.DELETE_RULE "
+                "FROM information_schema.REFERENTIAL_CONSTRAINTS rc "
+                "JOIN information_schema.KEY_COLUMN_USAGE kcu "
+                "  ON rc.CONSTRAINT_NAME = kcu.CONSTRAINT_NAME "
+                "  AND rc.CONSTRAINT_SCHEMA = kcu.TABLE_SCHEMA "
+                "WHERE kcu.TABLE_SCHEMA = DATABASE() AND kcu.TABLE_NAME = :t "
+                "AND kcu.COLUMN_NAME = :c AND kcu.REFERENCED_TABLE_NAME IS NOT NULL"
+            ), {'t': _table, 'c': _col})
+            row = result.fetchone()
+            if row:
+                fk_name, delete_rule = row
+                if delete_rule.upper() != 'CASCADE':
+                    db.session.execute(text(
+                        f"ALTER TABLE {_table} DROP FOREIGN KEY {fk_name}, "
+                        f"ADD CONSTRAINT {fk_name} FOREIGN KEY ({_col}) REFERENCES {_ref} ON DELETE CASCADE"
+                    ))
+                    db.session.commit()
+                    print(f"已更新 {_table}.{_col} 外键 -> ON DELETE CASCADE")
+                else:
+                    print(f"{_table}.{_col} 外键已是 ON DELETE CASCADE，无需更新")
+            else:
+                print(f"未找到 {_table}.{_col} 外键，跳过")
+        except Exception as e:
+            print(f"{_table}.{_col} 外键迁移跳过: {e}")
+            db.session.rollback()
+
     # 2. 如果报刊表为空，导入初始报刊
     if Newspaper.query.count() == 0:
         newspapers = [

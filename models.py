@@ -13,7 +13,7 @@ class User(db.Model):
     address = db.Column(db.String(200))
     register_date = db.Column(db.DateTime, default=datetime.now)
 
-    orders = db.relationship('Order', backref='user', lazy=True)
+    orders = db.relationship('Order', backref='user', lazy=True, cascade='all, delete-orphan')
 
 class Newspaper(db.Model):
     __tablename__ = 'newspaper'
@@ -25,12 +25,12 @@ class Newspaper(db.Model):
     description = db.Column(db.Text)
     image = db.Column(db.String(255), default='')
 
-    subscriptions = db.relationship('Subscription', backref='newspaper', lazy=True)
+    subscriptions = db.relationship('Subscription', backref='newspaper', lazy=True, cascade='all, delete-orphan')
 
 class Order(db.Model):
     __tablename__ = 'order_main'
     order_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id', ondelete='CASCADE'), nullable=False)
     order_date = db.Column(db.DateTime, default=datetime.now)
     total_amount = db.Column(db.Numeric(12,2), nullable=False, default=0)
     status = db.Column(db.SmallInteger, default=1)
@@ -42,8 +42,8 @@ class Order(db.Model):
 class Subscription(db.Model):
     __tablename__ = 'subscription'
     subscription_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    order_id = db.Column(db.Integer, db.ForeignKey('order_main.order_id'), nullable=False)
-    newspaper_id = db.Column(db.Integer, db.ForeignKey('newspaper.newspaper_id'), nullable=False)
+    order_id = db.Column(db.Integer, db.ForeignKey('order_main.order_id', ondelete='CASCADE'), nullable=False)
+    newspaper_id = db.Column(db.Integer, db.ForeignKey('newspaper.newspaper_id', ondelete='CASCADE'), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
     subtotal = db.Column(db.Numeric(12,2), nullable=False)
 

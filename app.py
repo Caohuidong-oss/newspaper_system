@@ -1,9 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import (Flask, render_template, request, redirect, url_for, flash,
+                   session, send_file)
 from config import Config
 from models import db, User, Newspaper, Order, Subscription, LoginUser
 from sqlalchemy import func
 from werkzeug.security import generate_password_hash, check_password_hash
-from werkzeug.utils import secure_filename
 from functools import wraps
 from flask_wtf.csrf import CSRFProtect
 import os
@@ -69,12 +69,54 @@ def admin_required(f):
     return decorated_function
 
 # ==================== 辅助函数 ====================
+
+DB_ENGINE = os.environ.get('MYSQL_DATABASE') and 'mysql' or 'sqlite'
+
+
 def get_current_user():
     """获取当前登录用户对应的订户记录"""
     username = session.get('username')
     if not username:
         return None
     return User.query.filter_by(username=username).first()
+
+
+def get_current_login_user():
+    """获取当前登录账号记录"""
+    user_id = session.get('user_id')
+    if not user_id:
+        return None
+    return LoginUser.query.get(user_id)
+
+
+def query_top_newspapers(base_query=None, limit=5):
+    """查询订购量前 N 的报刊"""
+    q = db.session.query(
+        Newspaper.name.label('name'),
+        func.sum(Subscription.quantity).label('total_qty'),
+        func.sum(Subscription.subtotal).label('total_amount'),
+    ).join(Subscription, Newspaper.newspaper_id == Subscription.newspaper_id)
+    if base_query is not None:
+        q = q.filter(Subscription.order_id.in_(
+            db.session.query(Order.order_id).filter(base_query)
+        ))
+    return q.group_by(Newspaper.newspaper_id, Newspaper.name
+    ).order_by(func.sum(Subscription.quantity).desc()).limit(limit).all()
+
+
+def query_order_stats(base_query=None):
+    """查询订单统计：总订阅量、总收入"""
+    if base_query is not None:
+        total_qty = db.session.query(func.sum(Subscription.quantity)).join(
+            Order, Subscription.order_id == Order.order_id
+        ).filter(base_query).scalar() or 0
+        total_rev = db.session.query(func.sum(Subscription.subtotal)).join(
+            Order, Subscription.order_id == Order.order_id
+        ).filter(base_query).scalar() or 0
+    else:
+        total_qty = db.session.query(func.sum(Subscription.quantity)).scalar() or 0
+        total_rev = db.session.query(func.sum(Subscription.subtotal)).scalar() or 0
+    return total_qty, float(total_rev)
 
 # ==================== 认证路由 ====================
 @app.route('/login', methods=['GET', 'POST'])
@@ -153,7 +195,6 @@ def logout():
 def api_test():
     """API 测试页（开发用，方便调试 JWT）"""
     return render_template('api_test.html')
-    return redirect(url_for('index'))
 
 # ==================== 个人中心 ====================
 @app.route('/profile', methods=['GET', 'POST'])
@@ -373,16 +414,14 @@ def index():
     username = session.get('username')
 
     if is_admin:
-        # 管理员：看全平台数据
         total_users = User.query.count()
         total_orders = Order.query.count()
         total_revenue = db.session.query(func.sum(Subscription.subtotal)).scalar() or 0
         recent_orders = Order.query.order_by(Order.order_id.desc()).limit(5).all()
     else:
-        # 订阅者：只看自己的数据
         current_user = User.query.filter_by(username=username).first() if username else None
         if current_user:
-            total_users = 1  # 只有自己
+            total_users = 1
             total_orders = Order.query.filter_by(user_id=current_user.user_id).count()
             total_revenue = db.session.query(func.sum(Order.total_amount))\
                 .filter(Order.user_id == current_user.user_id).scalar() or 0
@@ -395,22 +434,12 @@ def index():
             recent_orders = []
 
     total_newspapers = Newspaper.query.count()
-
-    top_newspapers = db.session.query(
-        Newspaper.name,
-        func.sum(Subscription.quantity).label('total_qty')
-    ).join(Subscription, Newspaper.newspaper_id == Subscription.newspaper_id)\
-     .group_by(Newspaper.newspaper_id)\
-     .order_by(func.sum(Subscription.quantity).desc())\
-     .limit(5).all()
+    top_newspapers = query_top_newspapers(limit=5)
 
     return render_template('index.html',
-        is_admin=is_admin,
-        total_users=total_users,
-        total_newspapers=total_newspapers,
-        total_orders=total_orders,
-        total_revenue=total_revenue,
-        recent_orders=recent_orders,
+        is_admin=is_admin, total_users=total_users,
+        total_newspapers=total_newspapers, total_orders=total_orders,
+        total_revenue=total_revenue, recent_orders=recent_orders,
         top_newspapers=top_newspapers
     )
 
@@ -469,6 +498,10 @@ def user_edit(user_id):
 @admin_required
 def user_delete(user_id):
     user = User.query.get_or_404(user_id)
+    # 同步删除登录账号
+    login_user = LoginUser.query.filter_by(username=user.username).first()
+    if login_user:
+        db.session.delete(login_user)
     db.session.delete(user)
     db.session.commit()
     flash('订户已删除！', 'danger')
@@ -605,6 +638,11 @@ def newspaper_delete(newspaper_id):
         img_path = os.path.join(UPLOAD_FOLDER, newspaper.image)
         if os.path.exists(img_path):
             os.remove(img_path)
+    # 检查是否有订阅记录，有则拒绝删除
+    sub_count = Subscription.query.filter_by(newspaper_id=newspaper_id).count()
+    if sub_count > 0:
+        flash(f'该报刊已有 {sub_count} 条订阅记录，无法删除（建议下架而非删除）', 'danger')
+        return redirect(url_for('newspapers'))
     db.session.delete(newspaper)
     db.session.commit()
     flash('报刊已删除！', 'danger')
@@ -688,9 +726,10 @@ def order_add():
         if session.get('role') != 'admin':
             user_id = current_user.user_id
         else:
-            user_id = request.form.get('user_id')
-            if not user_id:
-                flash('请选择订户', 'danger')
+            try:
+                user_id = int(request.form.get('user_id', ''))
+            except (ValueError, TypeError):
+                flash('请选择有效的订户', 'danger')
                 return redirect(url_for('order_add'))
         
         items = []
@@ -905,7 +944,6 @@ def make_excel_response(filename, headers, rows):
     wb.save(buf)
     buf.seek(0)
 
-    from flask import send_file
     return send_file(
         buf,
         as_attachment=True,
@@ -978,30 +1016,22 @@ def export_newspapers():
 def export_statistics():
     """导出统计报表为 Excel（多 sheet）"""
     wb = Workbook()
+    is_admin = session.get('role') == 'admin'
+    user = get_current_user() if not is_admin else None
+    base_filter = None
+    if user:
+        base_filter = Order.user_id == user.user_id
 
     # ===== Sheet 1: 报刊统计 =====
-    is_admin = session.get('role') == 'admin'
-    if is_admin:
-        stats = db.session.query(
-            Newspaper.name,
-            func.sum(Subscription.quantity).label('total_quantity'),
-            func.sum(Subscription.subtotal).label('total_amount')
-        ).join(Subscription, Newspaper.newspaper_id == Subscription.newspaper_id)\
-         .group_by(Newspaper.newspaper_id)\
-         .order_by(func.sum(Subscription.subtotal).desc()).all()
-    else:
-        user = get_current_user()
-        if user:
-            stats = db.session.query(
-                Newspaper.name,
-                func.sum(Subscription.quantity).label('total_quantity'),
-                func.sum(Subscription.subtotal).label('total_amount')
-            ).join(Subscription, Newspaper.newspaper_id == Subscription.newspaper_id)\
-             .filter(Subscription.order.has(user_id=user.user_id))\
-             .group_by(Newspaper.newspaper_id)\
-             .order_by(func.sum(Subscription.subtotal).desc()).all()
-        else:
-            stats = []
+    stats_q = db.session.query(
+        Newspaper.name,
+        func.sum(Subscription.quantity).label('total_quantity'),
+        func.sum(Subscription.subtotal).label('total_amount')
+    ).join(Subscription, Newspaper.newspaper_id == Subscription.newspaper_id)
+    if user:
+        stats_q = stats_q.join(Subscription.order).filter(base_filter)
+    stats = stats_q.group_by(Newspaper.newspaper_id).order_by(
+        func.sum(Subscription.subtotal).desc()).all()
 
     ws1 = wb.active
     ws1.title = '报刊统计'
@@ -1020,26 +1050,15 @@ def export_statistics():
         ws1.column_dimensions[col[0].column_letter].width = min(max_len + 4, 40)
 
     # ===== Sheet 2: 类型统计 =====
-    if is_admin:
-        type_stats = db.session.query(
-            Newspaper.type,
-            func.sum(Subscription.quantity).label('total_quantity'),
-            func.sum(Subscription.subtotal).label('total_amount')
-        ).join(Subscription, Newspaper.newspaper_id == Subscription.newspaper_id)\
-         .group_by(Newspaper.type)\
-         .order_by(func.sum(Subscription.subtotal).desc()).all()
-    else:
-        user = get_current_user()
-        type_stats = []
-        if user:
-            type_stats = db.session.query(
-                Newspaper.type,
-                func.sum(Subscription.quantity).label('total_quantity'),
-                func.sum(Subscription.subtotal).label('total_amount')
-            ).join(Subscription, Newspaper.newspaper_id == Subscription.newspaper_id)\
-             .filter(Subscription.order.has(user_id=user.user_id))\
-             .group_by(Newspaper.type)\
-             .order_by(func.sum(Subscription.subtotal).desc()).all()
+    type_q = db.session.query(
+        Newspaper.type,
+        func.sum(Subscription.quantity).label('total_quantity'),
+        func.sum(Subscription.subtotal).label('total_amount')
+    ).join(Subscription, Newspaper.newspaper_id == Subscription.newspaper_id)
+    if user:
+        type_q = type_q.join(Subscription.order).filter(base_filter)
+    type_stats = type_q.group_by(Newspaper.type).order_by(
+        func.sum(Subscription.subtotal).desc()).all()
 
     ws2 = wb.create_sheet('类型统计')
     ws2.append(['类型', '总份数', '总金额(元)'])
@@ -1056,7 +1075,6 @@ def export_statistics():
     wb.save(buf)
     buf.seek(0)
 
-    from flask import send_file
     filename = f"统计报表_{dt.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
     return send_file(
         buf, as_attachment=True, download_name=filename,
@@ -1067,89 +1085,59 @@ def export_statistics():
 @app.route('/statistics')
 @login_required
 def statistics():
-    if session.get('role') == 'admin':
-        stats = db.session.query(
-            Newspaper.name,
-            func.sum(Subscription.quantity).label('total_quantity'),
-            func.sum(Subscription.subtotal).label('total_amount')
-        ).join(Subscription, Newspaper.newspaper_id == Subscription.newspaper_id)\
-         .group_by(Newspaper.newspaper_id)\
-         .order_by(func.sum(Subscription.subtotal).desc()).all()
-        total_subscriptions = db.session.query(func.sum(Subscription.quantity)).scalar() or 0
-        total_revenue = db.session.query(func.sum(Subscription.subtotal)).scalar() or 0
-        total_orders = db.session.query(Order).count()
-        total_users = db.session.query(User).count()
-        total_newspapers = db.session.query(Newspaper).count()
-        type_stats = db.session.query(
-            Newspaper.type,
-            func.sum(Subscription.quantity).label('total_quantity'),
-            func.sum(Subscription.subtotal).label('total_amount')
-        ).join(Subscription, Newspaper.newspaper_id == Subscription.newspaper_id)\
-         .group_by(Newspaper.type)\
-         .order_by(func.sum(Subscription.subtotal).desc()).all()
-        chart_labels = [item.name for item in stats]
-        chart_data = [float(item.total_amount) for item in stats]
-        chart_colors = ['#0d6efd', '#6610f2', '#6f42c1', '#d63384', '#dc3545',
-                        '#fd7e14', '#ffc107', '#198754', '#0dcaf0', '#0d6efd']
-        max_amount = stats[0].total_amount if stats else 0
+    is_admin = session.get('role') == 'admin'
+    user = get_current_user() if not is_admin else None
+    base_filter = None
+    if user:
+        base_filter = Order.user_id == user.user_id
+
+    # 报刊维度统计
+    stats_q = db.session.query(
+        Newspaper.name,
+        func.sum(Subscription.quantity).label('total_quantity'),
+        func.sum(Subscription.subtotal).label('total_amount')
+    ).join(Subscription, Newspaper.newspaper_id == Subscription.newspaper_id)
+    if user:
+        stats_q = stats_q.join(Subscription.order).filter(base_filter)
+    stats = stats_q.group_by(Newspaper.newspaper_id).order_by(
+        func.sum(Subscription.subtotal).desc()).all()
+
+    # 汇总数据
+    if is_admin or user:
+        total_qty, total_revenue = query_order_stats(base_filter)
     else:
-        user = User.query.filter_by(username=session.get('username')).first()
-        if user:
-            stats = db.session.query(
-                Newspaper.name,
-                func.sum(Subscription.quantity).label('total_quantity'),
-                func.sum(Subscription.subtotal).label('total_amount')
-            ).join(Subscription, Newspaper.newspaper_id == Subscription.newspaper_id)\
-             .filter(Subscription.order.has(user_id=user.user_id))\
-             .group_by(Newspaper.newspaper_id)\
-             .order_by(func.sum(Subscription.subtotal).desc()).all()
-            total_subscriptions = db.session.query(func.sum(Subscription.quantity)).filter(
-                Subscription.order.has(user_id=user.user_id)
-            ).scalar() or 0
-            total_revenue = db.session.query(func.sum(Subscription.subtotal)).filter(
-                Subscription.order.has(user_id=user.user_id)
-            ).scalar() or 0
-            total_orders = Order.query.filter_by(user_id=user.user_id).count()
-            total_users = 1
-            total_newspapers = Newspaper.query.count()
-            type_stats = db.session.query(
-                Newspaper.type,
-                func.sum(Subscription.quantity).label('total_quantity'),
-                func.sum(Subscription.subtotal).label('total_amount')
-            ).join(Subscription, Newspaper.newspaper_id == Subscription.newspaper_id)\
-             .filter(Subscription.order.has(user_id=user.user_id))\
-             .group_by(Newspaper.type)\
-             .order_by(func.sum(Subscription.subtotal).desc()).all()
-            chart_labels = [item.name for item in stats]
-            chart_data = [float(item.total_amount) for item in stats]
-            chart_colors = ['#0d6efd', '#6610f2', '#6f42c1', '#d63384', '#dc3545']
-            max_amount = stats[0].total_amount if stats else 0
-        else:
-            stats = []
-            total_subscriptions = 0
-            total_revenue = 0
-            total_orders = 0
-            total_users = 1
-            total_newspapers = Newspaper.query.count()
-            type_stats = []
-            chart_labels = []
-            chart_data = []
-            chart_colors = []
-            max_amount = 0
-    
+        total_qty = total_revenue = 0
+    total_subscriptions = total_qty
+    total_orders = Order.query.count() if is_admin else (
+        Order.query.filter_by(user_id=user.user_id).count() if user else 0)
+    total_users = User.query.count() if is_admin else 1
+    total_newspapers = Newspaper.query.count()
+
+    # 类型维度统计
+    type_q = db.session.query(
+        Newspaper.type,
+        func.sum(Subscription.quantity).label('total_quantity'),
+        func.sum(Subscription.subtotal).label('total_amount')
+    ).join(Subscription, Newspaper.newspaper_id == Subscription.newspaper_id)
+    if user:
+        type_q = type_q.join(Subscription.order).filter(base_filter)
+    type_stats = type_q.group_by(Newspaper.type).order_by(
+        func.sum(Subscription.subtotal).desc()).all()
+
+    chart_labels = [item.name for item in stats]
+    chart_data = [float(item.total_amount) for item in stats]
+    chart_colors = ['#0d6efd', '#6610f2', '#6f42c1', '#d63384', '#dc3545',
+                    '#fd7e14', '#ffc107', '#198754', '#0dcaf0', '#0d6efd']
+    max_amount = stats[0].total_amount if stats else 0
+
     return render_template('statistics.html',
-        stats=stats,
-        max_amount=max_amount,
-        total_subscriptions=total_subscriptions,
-        total_revenue=total_revenue,
-        total_orders=total_orders,
-        total_users=total_users,
-        total_newspapers=total_newspapers,
-        type_stats=type_stats,
-        chart_labels=chart_labels,
-        chart_data=chart_data,
-        chart_colors=chart_colors
-    )
+                           stats=stats, max_amount=max_amount,
+                           total_subscriptions=total_subscriptions,
+                           total_revenue=total_revenue, total_orders=total_orders,
+                           total_users=total_users, total_newspapers=total_newspapers,
+                           type_stats=type_stats,
+                           chart_labels=chart_labels, chart_data=chart_data,
+                           chart_colors=chart_colors)
 
 # ==================== 404 错误处理 ====================
 @app.errorhandler(404)

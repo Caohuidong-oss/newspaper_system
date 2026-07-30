@@ -401,8 +401,10 @@ def api_order_detail(order_id):
     order = Order.query.get(order_id)
     if not order:
         return fail('订单不存在', 404)
-    if cu['role'] != 'admin' and not User.query.filter_by(username=cu['username'], user_id=order.user_id).first():
-        return fail('无权查看此订单', 403)
+    if cu['role'] != 'admin':
+        subscriber = User.query.filter_by(username=cu['username']).first()
+        if not subscriber or subscriber.user_id != order.user_id:
+            return fail('无权查看此订单', 403)
     return ok({'order': order_to_dict(order)})
 
 
@@ -414,8 +416,10 @@ def api_order_cancel(order_id):
     order = Order.query.get(order_id)
     if not order:
         return fail('订单不存在', 404)
-    if cu['role'] != 'admin' and not User.query.filter_by(username=cu['username'], user_id=order.user_id).first():
-        return fail('无权操作此订单', 403)
+    if cu['role'] != 'admin':
+        subscriber = User.query.filter_by(username=cu['username']).first()
+        if not subscriber or subscriber.user_id != order.user_id:
+            return fail('无权操作此订单', 403)
     if order.status != 1:
         return fail('只能取消待处理的订单')
     order.status = 3
@@ -543,7 +547,7 @@ def api_admin_set_role(user_id):
     login_user = LoginUser.query.get(user_id)
     if not login_user:
         return fail('用户不存在', 404)
-    if login_user.id == request.current_user.get('user_id'):
+    if login_user.username == request.current_user.get('username'):
         return fail('不能修改自己的权限')
     role = data.get('role', '')
     if role not in ('admin', 'user'):
