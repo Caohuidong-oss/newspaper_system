@@ -562,3 +562,21 @@ def api_admin_set_role(user_id):
 @api.route('/ping', methods=['GET'])
 def api_ping():
     return ok({'status': 'ok', 'time': datetime.now().isoformat()})
+
+
+@api.route('/newspapers/<int:newspaper_id>', methods=['DELETE'])
+@login_required_api
+def api_newspaper_delete(newspaper_id):
+    """删除报刊（API 端点，CSRF 豁免，方便测试）"""
+    role = request.current_user.get('role', 'user') if hasattr(request, 'current_user') else 'user'
+    if role != 'admin':
+        return fail('需要管理员权限', 403)
+    newspaper = Newspaper.query.get(newspaper_id)
+    if not newspaper:
+        return fail('报刊不存在', 404)
+    sub_count = Subscription.query.filter_by(newspaper_id=newspaper_id).count()
+    if sub_count > 0:
+        return fail(f'该报刊已有 {sub_count} 条订阅记录，无法删除', 400)
+    db.session.delete(newspaper)
+    db.session.commit()
+    return ok({}, '报刊已删除')
