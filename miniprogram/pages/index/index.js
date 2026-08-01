@@ -60,7 +60,7 @@ Page({
         const list = Array.isArray(data) ? data : (data.orders || []);
         const recent = list.slice(0, 5).map(o => ({
           id: o.order_id,
-          userName: (o.user && o.user.real_name) || o.user_real_name || '',
+          userName: o.user_name || (o.user && o.user.real_name) || '',
           dateShort: o.date_short || (o.order_date || '').substring(0, 10),
           timeShort: o.time_short || (o.order_date || '').substring(11, 16),
           totalAmount: Number(o.total_amount || 0).toFixed(2),

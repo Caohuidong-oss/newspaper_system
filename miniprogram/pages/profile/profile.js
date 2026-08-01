@@ -5,11 +5,13 @@ Page({
     username: '',
     role: '',
     isAdmin: false,
+    initialLetter: '',
     subscriberName: '',
     subscriberPhone: '',
     subscriberAddress: '',
     editable: false,
     loading: false,
+    saving: false,
   },
 
   onShow() {
@@ -17,7 +19,12 @@ Page({
     const username = app.globalData.username || wx.getStorageSync('username');
     const role = app.globalData.role || wx.getStorageSync('role');
     const isAdmin = role === 'admin';
-    this.setData({ username, role, isAdmin });
+    this.setData({
+      username,
+      role,
+      isAdmin,
+      initialLetter: username ? username.charAt(0).toUpperCase() : '',
+    });
     this.loadProfile();
   },
 
@@ -25,13 +32,16 @@ Page({
     this.setData({ loading: true });
     api.getProfile()
       .then(res => {
+        const sub = res.subscriber || {};
         this.setData({
-          subscriberName: res.name || res.subscriberName || '',
-          subscriberPhone: res.phone || res.subscriberPhone || '',
-          subscriberAddress: res.address || res.subscriberAddress || '',
+          subscriberName: sub.real_name || sub.name || '',
+          subscriberPhone: sub.phone || '',
+          subscriberAddress: sub.address || '',
         });
       })
-      .catch(() => {})
+      .catch(() => {
+        wx.showToast({ title: '加载资料失败', icon: 'none' });
+      })
       .finally(() => {
         this.setData({ loading: false });
       });
@@ -54,8 +64,27 @@ Page({
   },
 
   onSave() {
-    wx.showToast({ title: '资料已保存（模拟）', icon: 'success' });
-    this.setData({ editable: false });
+    const name = (this.data.subscriberName || '').trim();
+    if (!name) {
+      wx.showToast({ title: '姓名不能为空', icon: 'none' });
+      return;
+    }
+    this.setData({ saving: true });
+    api.updateProfile({
+      real_name: name,
+      phone: this.data.subscriberPhone,
+      address: this.data.subscriberAddress,
+    })
+      .then(() => {
+        wx.showToast({ title: '资料已保存', icon: 'success' });
+        this.setData({ editable: false });
+      })
+      .catch(err => {
+        wx.showToast({ title: err.message || '保存失败', icon: 'none' });
+      })
+      .finally(() => {
+        this.setData({ saving: false });
+      });
   },
 
   onLogout() {
@@ -80,5 +109,9 @@ Page({
 
   goToStatistics() {
     wx.navigateTo({ url: '/pages/statistics/statistics' });
+  },
+
+  goToUserAdmin() {
+    wx.navigateTo({ url: '/pages/user-admin/user-admin' });
   },
 });

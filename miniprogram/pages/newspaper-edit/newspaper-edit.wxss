@@ -1,0 +1,56 @@
+.edit-container {
+  padding: 20rpx;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 0 24rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,.05);
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.form-row:last-child {
+  border-bottom: none;
+}
+
+.form-label {
+  width: 180rpx;
+  font-size: 28rpx;
+  color: #666;
+  flex-shrink: 0;
+}
+
+.form-input {
+  flex: 1;
+  font-size: 30rpx;
+}
+
+.picker-value {
+  flex: 1;
+  font-size: 30rpx;
+  color: #333;
+}
+
+.form-textarea {
+  flex: 1;
+  min-height: 140rpx;
+  font-size: 30rpx;
+}
+
+.submit-bar {
+  padding: 20rpx 0 40rpx;
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  border-radius: 999rpx;
+}

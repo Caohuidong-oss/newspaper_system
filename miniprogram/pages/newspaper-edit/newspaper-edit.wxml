@@ -1,0 +1,40 @@
+<view class="edit-container">
+  <view class="card">
+    <view class="form-row">
+      <text class="form-label">报刊名称 *</text>
+      <input class="form-input" value="{{name}}" bindinput="onNameInput" placeholder="如：人民日报" />
+    </view>
+    <view class="form-row">
+      <text class="form-label">类型</text>
+      <input class="form-input" value="{{type}}" bindinput="onTypeInput" placeholder="如：日报、周刊" />
+    </view>
+    <view class="form-row">
+      <text class="form-label">单价（元）*</text>
+      <input class="form-input" type="digit" value="{{price}}" bindinput="onPriceInput" placeholder="如：2.50" />
+    </view>
+    <view class="form-row">
+      <text class="form-label">出版周期</text>
+      <input class="form-input" value="{{period}}" bindinput="onPeriodInput" placeholder="如：日报、月刊" />
+    </view>
+    <view class="form-row">
+      <text class="form-label">上架日期</text>
+      <picker mode="date" value="{{availableFrom}}" bindchange="onFromInput">
+        <view class="picker-value">{{availableFrom || '留空 = 立即上架'}}</view>
+      </picker>
+    </view>
+    <view class="form-row">
+      <text class="form-label">截止日期</text>
+      <picker mode="date" value="{{availableUntil}}" bindchange="onUntilInput">
+        <view class="picker-value">{{availableUntil || '留空 = 永久可订'}}</view>
+      </picker>
+    </view>
+    <view class="form-row">
+      <text class="form-label">简介</text>
+      <textarea class="form-textarea" value="{{description}}" bindinput="onDescInput" placeholder="报刊简介（选填）" maxlength="500" />
+    </view>
+  </view>
+
+  <view class="submit-bar">
+    <button class="btn-primary submit-btn" bindtap="onSubmit" loading="{{submitting}}" disabled="{{submitting}}">保存</button>
+  </view>
+</view>

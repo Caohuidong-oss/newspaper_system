@@ -59,7 +59,6 @@
     <view class="action-bar">
       <button wx:if="{{isAdmin && order.status === 1}}" class="action-btn btn-confirm" bindtap="onConfirm">✅ 确认订单</button>
       <button wx:if="{{order.status === 1}}" class="action-btn btn-cancel" bindtap="onCancel">❌ 取消订单</button>
-      <button wx:if="{{order.status === 1 && !isAdmin}}" class="action-btn btn-cancel" bindtap="onCancel">❌ 取消订单</button>
     </view>
   </block>
 </view>

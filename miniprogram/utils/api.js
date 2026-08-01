@@ -48,11 +48,23 @@ module.exports = {
 
   getProfile: () => request('/auth/profile'),
 
+  updateProfile: (data) =>
+    request('/auth/profile', { method: 'PUT', data }),
+
   // ── 报刊 ──
   getNewspapers: (keyword = '') =>
     request(`/newspapers?keyword=${encodeURIComponent(keyword)}`),
 
   getNewspaperDetail: (id) => request(`/newspapers/${id}`),
+
+  createNewspaper: (data) =>
+    request('/newspapers', { method: 'POST', data }),
+
+  updateNewspaper: (id, data) =>
+    request(`/newspapers/${id}`, { method: 'PUT', data }),
+
+  deleteNewspaper: (id) =>
+    request(`/newspapers/${id}`, { method: 'DELETE' }),
 
   // ── 订单 ──
   getOrders: (keyword = '', status = '') =>

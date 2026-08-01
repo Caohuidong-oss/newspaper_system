@@ -32,6 +32,37 @@
 }
 .search-btn:active { opacity: .85; }
 
+.add-btn {
+  background: linear-gradient(135deg, #11998e, #38ef7d);
+}
+
+/* 下架标签 */
+.off-shelf-tag {
+  position: absolute;
+  top: 12rpx;
+  left: 12rpx;
+  background: rgba(220,53,69,.9);
+  color: #fff;
+  font-size: 20rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 20rpx;
+}
+
+/* 管理员操作按钮 */
+.admin-actions {
+  margin-top: 10rpx;
+  text-align: right;
+}
+
+.manage-btn {
+  display: inline-block;
+  font-size: 22rpx;
+  color: #667eea;
+  padding: 6rpx 16rpx;
+  border: 1rpx solid #667eea;
+  border-radius: 24rpx;
+}
+
 /* 报刊网格 */
 .newspapers-grid {
   display: flex;

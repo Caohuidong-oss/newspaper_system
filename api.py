@@ -284,6 +284,26 @@ def api_profile():
     })
 
 
+@api.route('/auth/profile', methods=['PUT'])
+@login_required_api
+def api_profile_update():
+    """更新当前用户的订户资料（姓名/电话/地址）"""
+    cu = request.current_user
+    subscriber = User.query.filter_by(username=cu['username']).first()
+    if not subscriber:
+        return fail('订户不存在，请先注册', 404)
+
+    data = request.get_json(force=True, silent=True) or {}
+    real_name = (data.get('real_name') or '').strip()
+    if not real_name:
+        return fail('真实姓名不能为空')
+    subscriber.real_name = real_name
+    subscriber.phone = (data.get('phone') or '').strip()
+    subscriber.address = (data.get('address') or '').strip()
+    db.session.commit()
+    return ok({'user': user_to_dict(subscriber)}, '资料更新成功')
+
+
 # ── 报刊接口 ──────────────────────────────────────
 
 @api.route('/newspapers', methods=['GET'])
@@ -324,6 +344,85 @@ def api_newspaper_detail(newspaper_id):
     if not n:
         return fail('报刊不存在', 404)
     return ok({'newspaper': newspaper_to_dict(n)})
+
+
+def _parse_api_date(s):
+    """解析日期字符串，非法返回 None"""
+    if not s or not str(s).strip():
+        return None
+    try:
+        return datetime.strptime(str(s).strip(), '%Y-%m-%d').date()
+    except (ValueError, TypeError):
+        return None
+
+
+@api.route('/newspapers', methods=['POST'])
+@admin_required_api
+def api_newspaper_create():
+    """新增报刊（管理员）
+    POST {name, type, price, period, description, image, available_from, available_until}
+    """
+    data = request.get_json(force=True, silent=True) or {}
+    name = (data.get('name') or '').strip()
+    price = data.get('price')
+    if not name:
+        return fail('报刊名称不能为空')
+    try:
+        price = float(price)
+    except (ValueError, TypeError):
+        return fail('单价无效')
+    if price <= 0:
+        return fail('单价必须大于 0')
+
+    newspaper = Newspaper(
+        name=name,
+        type=(data.get('type') or '').strip(),
+        price=price,
+        period=(data.get('period') or '').strip(),
+        description=(data.get('description') or '').strip(),
+        image=(data.get('image') or '').strip(),
+        available_from=_parse_api_date(data.get('available_from')),
+        available_until=_parse_api_date(data.get('available_until')),
+    )
+    db.session.add(newspaper)
+    db.session.commit()
+    return ok({'newspaper': newspaper_to_dict(newspaper)}, '报刊创建成功')
+
+
+@api.route('/newspapers/<int:newspaper_id>', methods=['PUT'])
+@admin_required_api
+def api_newspaper_update(newspaper_id):
+    """编辑报刊（管理员）"""
+    newspaper = Newspaper.query.get(newspaper_id)
+    if not newspaper:
+        return fail('报刊不存在', 404)
+    data = request.get_json(force=True, silent=True) or {}
+    name = (data.get('name') or '').strip()
+    if name:
+        newspaper.name = name
+    price = data.get('price')
+    if price is not None:
+        try:
+            price = float(price)
+        except (ValueError, TypeError):
+            return fail('单价无效')
+        if price <= 0:
+            return fail('单价必须大于 0')
+        newspaper.price = price
+    if data.get('type') is not None:
+        newspaper.type = data.get('type').strip()
+    if data.get('period') is not None:
+        newspaper.period = data.get('period').strip()
+    if data.get('description') is not None:
+        newspaper.description = data.get('description').strip()
+    if data.get('image') is not None:
+        newspaper.image = data.get('image').strip()
+    if 'available_from' in data:
+        newspaper.available_from = _parse_api_date(data.get('available_from'))
+    if 'available_until' in data:
+        newspaper.available_until = _parse_api_date(data.get('available_until'))
+    db.session.commit()
+    return ok({'newspaper': newspaper_to_dict(newspaper)}, '报刊更新成功')
 
 
 # ── 订单接口 ──────────────────────────────────────

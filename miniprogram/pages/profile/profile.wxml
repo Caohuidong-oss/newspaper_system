@@ -24,15 +24,19 @@
       <text class="info-label">地址</text>
       <input class="info-input" value="{{subscriberAddress}}" disabled="{{!editable}}" bindinput="onAddressInput" placeholder="未填写" />
     </view>
-    <button wx:if="{{editable}}" class="btn-primary save-btn" bindtap="onSave">保存资料</button>
+    <button wx:if="{{editable}}" class="btn-primary save-btn" bindtap="onSave" loading="{{saving}}" disabled="{{saving}}">保存资料</button>
   </view>
 
   <!-- 快捷入口 -->
   <view class="card" wx:if="{{isAdmin}}">
     <view class="card-header">管理</view>
+    <view class="menu-item" bindtap="goToUserAdmin">
+      <text>用户管理</text>
+      <text class="menu-arrow">›</text>
+    </view>
     <view class="menu-item" bindtap="goToStatistics">
       <text>数据统计</text>
-      <text class="menu-arrow">?</text>
+      <text class="menu-arrow">›</text>
     </view>
   </view>
 

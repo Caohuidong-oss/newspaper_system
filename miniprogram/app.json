@@ -7,6 +7,8 @@
     "pages/orders/orders",
     "pages/order-detail/order-detail",
     "pages/order-create/order-create",
+    "pages/newspaper-edit/newspaper-edit",
+    "pages/user-admin/user-admin",
     "pages/profile/profile",
     "pages/statistics/statistics"
   ],

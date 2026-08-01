@@ -8,6 +8,7 @@ Page({
     selectedUserIndex: -1,
     users: [],
     quantities: {},
+    totalAmount: 0,
     remark: '',
     deliveryAddress: '',
     isAdmin: false,
@@ -50,7 +51,12 @@ Page({
           if (selected) quantities[selected.id] = 1;
         }
 
-        this.setData({ newspapers: list, quantities, selectedNewspaper: selected });
+        this.setData({
+          newspapers: list,
+          quantities,
+          selectedNewspaper: selected,
+          totalAmount: this.calcTotal(list, quantities),
+        });
       })
       .catch(err => {
         wx.showToast({ title: err.message || '加载失败', icon: 'none' });
@@ -66,19 +72,24 @@ Page({
         const list = Array.isArray(res) ? res : (res.users || res.list || res.records || []);
         this.setData({ users: list });
       })
-      .catch(() => {});
+      .catch(() => {
+        wx.showToast({ title: '加载订户失败', icon: 'none' });
+      });
+  },
+
+  calcTotal(list, quantities) {
+    return (list || []).reduce((sum, n) => {
+      return sum + (parseFloat(n.price) || 0) * (quantities[n.id] || 0);
+    }, 0);
   },
 
   selectNewspaper(e) {
     const id = e.currentTarget.dataset.id;
-    const newspaper = this.data.newspapers.find(n => n.id === id);
-    this.setData({ selectedNewspaper: newspaper });
-
     const quantities = { ...this.data.quantities };
     if (!quantities[id] || quantities[id] === 0) {
       quantities[id] = 1;
     }
-    this.setData({ quantities });
+    this.setData({ quantities, totalAmount: this.calcTotal(this.data.newspapers, quantities) });
   },
 
   onQtyChange(e) {
@@ -88,12 +99,16 @@ Page({
     const next = current + parseInt(delta);
     if (next < 0) return;
     quantities[id] = next;
-    this.setData({ quantities });
+    this.setData({ quantities, totalAmount: this.calcTotal(this.data.newspapers, quantities) });
   },
 
   onUserSelect(e) {
-    const userId = e.detail.value;
-    this.setData({ selectedUserId: userId });
+    const index = parseInt(e.detail.value) || 0;
+    const user = this.data.users[index];
+    this.setData({
+      selectedUserIndex: index,
+      selectedUserId: user ? user.user_id : '',
+    });
   },
 
   onRemarkInput(e) {
@@ -104,24 +119,12 @@ Page({
     this.setData({ deliveryAddress: e.detail.value });
   },
 
-  getSubtotal(id) {
-    const newspaper = this.data.newspapers.find(n => n.id === id);
-    const qty = this.data.quantities[id] || 0;
-    return newspaper ? (newspaper.price * qty) : 0;
-  },
-
-  getTotal() {
-    return this.data.newspapers.reduce((sum, n) => {
-      return sum + this.getSubtotal(n.id);
-    }, 0);
-  },
-
   onSubmit() {
     const items = this.data.newspapers
       .filter(n => (this.data.quantities[n.id] || 0) > 0)
       .map(n => ({
-        newspaperId: n.id,
-        quantity: this.data.quantities[n.id],
+        newspaper_id: n.id,
+        qty: this.data.quantities[n.id],
       }));
 
     if (items.length === 0) {
@@ -129,9 +132,9 @@ Page({
       return;
     }
 
-    const data = { items, remark: this.data.remark, delivery_address: this.data.deliveryAddress };
+    const data = { items, note: this.data.remark, delivery_address: this.data.deliveryAddress };
     if (this.data.isAdmin && this.data.selectedUserId) {
-      data.userId = this.data.selectedUserId;
+      data.user_id = this.data.selectedUserId;
     }
 
     this.setData({ submitting: true });

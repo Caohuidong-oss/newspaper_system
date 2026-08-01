@@ -1,0 +1,18 @@
+<view class="ua-container">
+  <view wx:if="{{loading}}" class="loading-text">加载中...</view>
+  <view wx:elif="{{users.length === 0}}" class="empty-text">暂无用户</view>
+  <view wx:else class="user-list">
+    <view class="user-item" wx:for="{{users}}" wx:key="id">
+      <view class="user-info">
+        <text class="user-name">{{item.username}}</text>
+        <text class="badge {{item.role === 'admin' ? 'badge-admin' : 'badge-user'}}">{{item.role === 'admin' ? '管理员' : '订阅者'}}</text>
+        <text class="user-date">{{item.created_at}}</text>
+      </view>
+      <view class="role-btn {{item.role === 'admin' ? 'btn-down' : 'btn-up'}}"
+            data-id="{{item.id}}" data-username="{{item.username}}" data-role="{{item.role}}"
+            bindtap="onToggleRole">
+        {{item.role === 'admin' ? '降为订阅者' : '设为管理员'}}
+      </view>
+    </view>
+  </view>
+</view>

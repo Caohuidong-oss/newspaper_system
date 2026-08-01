@@ -98,26 +98,6 @@ Page({
     });
   },
 
-  onDelete() {
-    const id = this.data.order.order_id;
-    wx.showModal({
-      title: '删除订单',
-      content: '确定要删除该订单吗？此操作不可撤销。',
-      success: (res) => {
-        if (res.confirm) {
-          api.cancelOrder(id)
-            .then(() => {
-              wx.showToast({ title: '已删除', icon: 'success' });
-              setTimeout(() => wx.navigateBack(), 500);
-            })
-            .catch(err => {
-              wx.showToast({ title: err.message || '操作失败', icon: 'none' });
-            });
-        }
-      },
-    });
-  },
-
   navigateBack() {
     wx.navigateBack();
   },

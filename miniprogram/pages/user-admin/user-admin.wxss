@@ -1,0 +1,60 @@
+.ua-container {
+  padding: 20rpx;
+}
+
+.loading-text, .empty-text {
+  text-align: center;
+  padding: 80rpx 0;
+  color: #999;
+  font-size: 28rpx;
+}
+
+.user-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,.05);
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+  flex: 1;
+}
+
+.user-name {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #333;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4rpx 16rpx;
+  border-radius: 16rpx;
+  font-size: 20rpx;
+  font-weight: 600;
+  align-self: flex-start;
+}
+.badge-admin { background: #dc3545; color: #fff; }
+.badge-user { background: #0d6efd; color: #fff; }
+
+.user-date {
+  font-size: 22rpx;
+  color: #999;
+}
+
+.role-btn {
+  padding: 14rpx 24rpx;
+  border-radius: 40rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.btn-up { background: #e8f4fd; color: #0d6efd; }
+.btn-down { background: #f8d7da; color: #721c24; }

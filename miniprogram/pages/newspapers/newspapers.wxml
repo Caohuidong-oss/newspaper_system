@@ -3,6 +3,7 @@
   <view class="search-bar">
     <input class="search-input" placeholder="搜索报刊名称..." value="{{keyword}}" bindinput="onKeywordInput" />
     <button class="search-btn" bindtap="onSearch">搜索</button>
+    <button wx:if="{{isAdmin}}" class="search-btn add-btn" bindtap="goToCreate">+ 新增</button>
   </view>
 
   <!-- 加载状态 -->
@@ -16,13 +17,17 @@
     <view class="newspaper-card" wx:for="{{newspapers}}" wx:key="id" data-id="{{item.id}}" bindtap="goToCreateOrder">
       <view class="image-wrap">
         <image class="newspaper-image" src="{{item.image_url || ''}}" mode="aspectFill" />
+        <view wx:if="{{isAdmin && !item.is_available}}" class="off-shelf-tag">已下架</view>
       </view>
       <view class="newspaper-info">
         <text class="newspaper-name">{{item.name}}</text>
-        <text class="newspaper-type badge badge-pending">{{item.type || '其他'}}</text>
+        <text class="newspaper-type badge {{item.is_available ? 'badge-pending' : 'badge-cancelled'}}">{{item.status_text || (item.is_available ? (item.type || '其他') : '已下架')}}</text>
         <view class="price-line">
           <text class="newspaper-price">¥{{item.price}}</text>
           <text class="price-unit">/期</text>
+        </view>
+        <view wx:if="{{isAdmin}}" class="admin-actions" catchtap="onManage" data-id="{{item.id}}" data-name="{{item.name}}">
+          <text class="manage-btn">管理 ›</text>
         </view>
       </view>
     </view>
