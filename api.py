@@ -4,17 +4,12 @@
 同时保留原有网页路由（app.py）不受影响。
 """
 import os
-import json
-import time
-import hmac
-import hashlib
-import base64
 from datetime import datetime, timedelta, date
 from functools import wraps
 
 import jwt
 import requests
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify
 
 from models import db, User, Newspaper, Order, Subscription, LoginUser
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -367,7 +362,10 @@ def api_order_create():
 
     # 确定订户
     if cu['role'] == 'admin' and data.get('user_id'):
-        subscriber = User.query.get(int(data['user_id']))
+        try:
+            subscriber = User.query.get(int(data['user_id']))
+        except (ValueError, TypeError):
+            return fail('无效的订户ID')
     else:
         subscriber = User.query.filter_by(username=cu['username']).first()
     if not subscriber:
@@ -381,10 +379,16 @@ def api_order_create():
     subs = []
     for item in items:
         nid = item.get('newspaper_id')
-        qty = int(item.get('qty', 0))
+        try:
+            qty = int(item.get('qty', 0))
+        except (ValueError, TypeError):
+            return fail('无效的订阅数量')
         if qty <= 0:
             continue
-        newspaper = Newspaper.query.get(nid)
+        try:
+            newspaper = Newspaper.query.get(int(nid))
+        except (ValueError, TypeError):
+            return fail('无效的报刊ID')
         if not newspaper:
             continue
         if not newspaper.is_available:

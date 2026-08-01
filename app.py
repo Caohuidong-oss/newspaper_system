@@ -155,6 +155,9 @@ def login():
             session['role'] = user.role
             flash(f'欢迎回来，{user.username}！', 'success')
             next_url = request.args.get('next') or url_for('index')
+            # 防 Open Redirect：只允许站内相对路径
+            if not next_url.startswith('/') or next_url.startswith('//'):
+                next_url = url_for('index')
             return redirect(next_url)
         else:
             flash('密码错误', 'danger')
@@ -171,6 +174,9 @@ def register():
         
         if not username or not password:
             flash('用户名和密码不能为空', 'danger')
+            return render_template('register.html')
+        if len(password) < 6:
+            flash('密码长度不能少于6位', 'danger')
             return render_template('register.html')
         if password != confirm:
             flash('两次密码输入不一致', 'danger')
@@ -349,11 +355,17 @@ def forgot_password():
             if not user or not check_password_hash(user.security_answer_hash, answer.lower()):
                 flash('答案错误', 'danger')
                 return render_template('forgot_password.html', step='2', username=username, question=user.security_question if user else '')
+            # 验证通过：在 session 中标记，Step 3 必须校验此标记
+            session['pw_reset_user'] = username
             return render_template('forgot_password.html', step='3', username=username)
         return render_template('forgot_password.html', step='2', username=username)
 
     # Step 3: 设置新密码
     if step == '3':
+        # 安全校验：必须通过 Step 2 的安全问题验证才能重置
+        if session.get('pw_reset_user') != username:
+            flash('请先完成安全问题验证', 'warning')
+            return render_template('forgot_password.html', step='1')
         if request.method == 'POST':
             new_password = request.form.get('new_password', '')
             confirm_password = request.form.get('confirm_password', '')
@@ -365,10 +377,12 @@ def forgot_password():
                 return render_template('forgot_password.html', step='3', username=username)
             user = LoginUser.query.filter_by(username=username).first()
             if not user:
+                session.pop('pw_reset_user', None)
                 flash('用户不存在', 'danger')
                 return render_template('forgot_password.html', step='1')
             user.password_hash = generate_password_hash(new_password)
             db.session.commit()
+            session.pop('pw_reset_user', None)  # 用完即清除标记
             flash('密码重置成功！请使用新密码登录', 'success')
             return redirect(url_for('login'))
         return render_template('forgot_password.html', step='3', username=username)
@@ -500,19 +514,34 @@ def user_add():
 @admin_required
 def user_edit(user_id):
     user = User.query.get_or_404(user_id)
+    old_username = user.username
     if request.method == 'POST':
-        user.username = request.form.get('username')
+        new_username = (request.form.get('username') or '').strip()
         user.real_name = request.form.get('real_name')
         user.phone = request.form.get('phone', '')
         user.address = request.form.get('address', '')
         new_password = request.form.get('password')
+
+        # 处理用户名变更：同步 LoginUser，避免两表不一致
+        if new_username and new_username != old_username:
+            if LoginUser.query.filter_by(username=new_username).first():
+                flash(f'用户名「{new_username}」已被占用', 'danger')
+                return render_template('user_form.html', user=user)
+            user.username = new_username
+            # 同步更新登录账号的用户名（以及正在登录该账号的会话无法追踪，提醒用户重新登录）
+            login_user = LoginUser.query.filter_by(username=old_username).first()
+            if login_user:
+                login_user.username = new_username
+        else:
+            user.username = new_username or old_username
+
         if new_password:
             # 同步更新登录密码（写入 LoginUser 的哈希字段）
             login_user = LoginUser.query.filter_by(username=user.username).first()
             if login_user:
                 login_user.password_hash = generate_password_hash(new_password)
         db.session.commit()
-        flash('订户信息更新成功！', 'success')
+        flash('订户信息更新成功！' + ('（用户名已变更，请通知用户重新登录）' if new_username and new_username != old_username else ''), 'success')
         return redirect(url_for('users'))
     return render_template('user_form.html', user=user)
 
@@ -682,10 +711,9 @@ def newspaper_delete(newspaper_id):
 @csrf.exempt
 @admin_required
 def newspaper_take_down(newspaper_id):
-    """下架报刊：将截止日期设为昨天，用户无法再订阅"""
+    """下架报刊：将截止日期设为昨天，立即对用户不可订阅"""
     newspaper = Newspaper.query.get_or_404(newspaper_id)
-    from datetime import date as dt_date
-    newspaper.available_until = dt_date.today()
+    newspaper.available_until = datetime.now().date() - timedelta(days=1)
     # 如果之前没有上架日期，设为今天
     if not newspaper.available_from:
         newspaper.available_from = dt_date.today()
@@ -781,10 +809,16 @@ def order_add():
         total = 0
         for key, value in request.form.items():
             if key.startswith('qty_'):
-                newspaper_id = int(key.split('_')[1])
-                qty = int(value) if value else 0
+                try:
+                    newspaper_id = int(key.split('_')[1])
+                    qty = int(value) if value else 0
+                except (ValueError, TypeError):
+                    continue
                 if qty > 0:
                     newspaper = Newspaper.query.get(newspaper_id)
+                    if not newspaper or not newspaper.is_available:
+                        flash(f'报刊「{newspaper.name if newspaper else newspaper_id}」已下架或不存在，已跳过', 'warning')
+                        continue
                     subtotal = newspaper.price * qty
                     items.append({
                         'newspaper_id': newspaper_id,
