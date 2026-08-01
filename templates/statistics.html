@@ -48,9 +48,21 @@
     <div class="col-6 col-md-3 fade-in">
         <div class="card stat-card shadow-sm text-white" style="background: linear-gradient(135deg, #11998e, #38ef7d);">
             <div class="card-body">
-                <span class="stat-icon">👥</span>
-                <div class="stat-value">{{ total_users }} / {{ total_newspapers }}</div>
-                <div class="stat-label">订户 / 报刊</div>
+                <span class="stat-icon">{% if session.role == 'admin' %}👥{% else %}📚{% endif %}</span>
+                <div class="stat-value">
+                    {% if session.role == 'admin' %}
+                        {{ total_users }} / {{ total_newspapers }}
+                    {% else %}
+                        {{ user_subscribed_kinds }} / {{ total_newspapers }}
+                    {% endif %}
+                </div>
+                <div class="stat-label">
+                    {% if session.role == 'admin' %}
+                        订户 / 报刊
+                    {% else %}
+                        我订过 / 全平台
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>

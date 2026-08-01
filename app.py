@@ -1158,6 +1158,14 @@ def statistics():
     total_users = User.query.count() if is_admin else 1
     total_newspapers = Newspaper.query.count()
 
+    # 普通用户：我订过的报刊种类数（订阅过的不同报刊）
+    user_subscribed_kinds = 0
+    if user and not is_admin:
+        user_subscribed_kinds = db.session.query(
+            db.func.count(db.distinct(Subscription.newspaper_id))
+        ).join(Order, Subscription.order_id == Order.order_id)\
+         .filter(Order.user_id == user.user_id).scalar() or 0
+
     # 类型维度统计
     type_q = db.session.query(
         Newspaper.type,
@@ -1180,6 +1188,7 @@ def statistics():
                            total_subscriptions=total_subscriptions,
                            total_revenue=total_revenue, total_orders=total_orders,
                            total_users=total_users, total_newspapers=total_newspapers,
+                           user_subscribed_kinds=user_subscribed_kinds,
                            type_stats=type_stats,
                            chart_labels=chart_labels, chart_data=chart_data,
                            chart_colors=chart_colors)
