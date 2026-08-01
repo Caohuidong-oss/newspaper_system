@@ -517,6 +517,7 @@ def user_edit(user_id):
     return render_template('user_form.html', user=user)
 
 @app.route('/user/delete/<int:user_id>', methods=['GET', 'POST'])
+@csrf.exempt
 @admin_required
 def user_delete(user_id):
     user = User.query.get_or_404(user_id)
@@ -657,6 +658,7 @@ def newspaper_edit(newspaper_id):
     return render_template('newspaper_form.html', newspaper=newspaper)
 
 @app.route('/newspaper/delete/<int:newspaper_id>', methods=['GET', 'POST'])
+@csrf.exempt
 @admin_required
 def newspaper_delete(newspaper_id):
     newspaper = Newspaper.query.get_or_404(newspaper_id)
@@ -677,6 +679,7 @@ def newspaper_delete(newspaper_id):
 
 
 @app.route('/newspaper/take_down/<int:newspaper_id>', methods=['GET', 'POST'])
+@csrf.exempt
 @admin_required
 def newspaper_take_down(newspaper_id):
     """下架报刊：将截止日期设为昨天，用户无法再订阅"""
