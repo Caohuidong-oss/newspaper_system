@@ -63,6 +63,18 @@
         </view>
       </view>
 
+      <view class="form-group agreement-row">
+        <checkbox-group bindchange="onAgreementChange">
+          <label class="checkbox-label">
+            <checkbox value="agreed" checked="{{agreed}}" color="#667eea" style="transform: scale(0.8);" />
+            <text class="agreement-text">我已阅读并同意</text>
+            <text class="agreement-link" catchtap="goAgreement">《用户服务协议》</text>
+            <text class="agreement-text">和</text>
+            <text class="agreement-link" catchtap="goPrivacy">《隐私政策》</text>
+          </label>
+        </checkbox-group>
+      </view>
+
       <button class="register-btn" bindtap="onRegister" loading="{{loading}}">✅ 注 册</button>
 
       <view class="register-tips">

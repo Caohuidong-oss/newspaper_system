@@ -1,0 +1,27 @@
+<view class="doc">
+  <text class="h1">🔒 隐私政策</text>
+
+  <text class="h2">我们收集哪些信息</text>
+  <text class="p">注册时收集：用户名、密码（加密哈希存储）、真实姓名、联系电话、收货地址。</text>
+  <text class="p">使用时收集：订单记录、订阅偏好、配送地址信息。</text>
+
+  <text class="h2">信息使用目的</text>
+  <text class="p">所收集的信息仅用于：账号注册与登录、订单履约、配送联系。不会用于商业广告推送，不会向任何第三方共享。</text>
+
+  <text class="h2">信息存储方式</text>
+  <text class="p">密码使用加密哈希算法存储，不会保存明文。其他信息存储于服务端数据库中，仅平台管理员可访问。</text>
+
+  <text class="h2">您的权利</text>
+  <text class="p">您可以随时查看、修改、删除您的个人信息，或注销账号。注销后相关信息将在合理期限内删除。</text>
+
+  <text class="h2">未成年人保护</text>
+  <text class="p">若您为未成年人，请在监护人指导下使用本服务，并在监护人同意后注册账号。</text>
+
+  <text class="h2">政策更新</text>
+  <text class="p">本政策可能适时更新，重大变更将通过站内通知告知。</text>
+
+  <text class="h2">联系方式</text>
+  <text class="p">如对本政策有任何疑问，请通过小程序客服联系平台管理员。</text>
+
+  <text class="footer">更新日期：2026-08-03</text>
+</view>

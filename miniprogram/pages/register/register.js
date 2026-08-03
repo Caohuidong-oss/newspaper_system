@@ -8,6 +8,7 @@ Page({
     realName: '',
     phone: '',
     address: '',
+    agreed: false,
     loading: false,
   },
 
@@ -18,8 +19,27 @@ Page({
   onPhoneInput(e) { this.setData({ phone: e.detail.value }); },
   onAddressInput(e) { this.setData({ address: e.detail.value }); },
 
+  // 协议勾选
+  onAgreementChange(e) {
+    this.setData({ agreed: e.detail.value.length > 0 });
+  },
+
+  goAgreement() {
+    wx.navigateTo({ url: '/pages/agreement/agreement' });
+  },
+
+  goPrivacy() {
+    wx.navigateTo({ url: '/pages/privacy/privacy' });
+  },
+
   onRegister() {
-    const { username, password, confirmPassword, realName, phone, address } = this.data;
+    const { username, password, confirmPassword, realName, phone, address, agreed } = this.data;
+
+    // 必须同意协议
+    if (!agreed) {
+      wx.showToast({ title: '请先阅读并同意协议和隐私政策', icon: 'none' });
+      return;
+    }
 
     if (!username.trim()) {
       wx.showToast({ title: '请输入用户名', icon: 'none' });

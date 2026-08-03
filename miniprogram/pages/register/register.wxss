@@ -113,3 +113,30 @@
   font-weight: 600;
   margin-left: 4rpx;
 }
+
+/* ===== 协议勾选 ===== */
+.agreement-row {
+  margin-bottom: 8rpx;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 24rpx;
+  color: #666;
+}
+
+.agreement-text {
+  font-size: 24rpx;
+  color: #666;
+  margin-right: 4rpx;
+}
+
+.agreement-link {
+  font-size: 24rpx;
+  color: #11998e;
+  font-weight: 600;
+  text-decoration: underline;
+  margin: 0 2rpx;
+}

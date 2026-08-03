@@ -1,0 +1,26 @@
+<view class="doc">
+  <text class="h1">📜 用户服务协议</text>
+
+  <text class="h2">一、服务内容</text>
+  <text class="p">本报刊订阅小程序为用户提供报刊浏览、在线下单、订单管理、订阅数据统计等服务。</text>
+
+  <text class="h2">二、账号注册</text>
+  <text class="p">用户须提供真实有效的注册信息（用户名、密码、真实姓名、联系电话、收货地址）。您点击注册即视为接受本协议全部条款。</text>
+
+  <text class="h2">三、账号安全</text>
+  <text class="p">请妥善保管您的账号和密码，因账号泄露造成的损失由用户自行承担。如发现账号被盗用，请立即联系管理员。</text>
+
+  <text class="h2">四、用户行为规范</text>
+  <text class="p">用户应遵守国家法律法规，不得利用本平台从事违法违规活动，不得发布虚假信息，不得侵犯他人合法权益。</text>
+
+  <text class="h2">五、订单与配送</text>
+  <text class="p">用户下单后需确认配送地址、订阅数量等信息。报刊下架不影响已生效的历史订阅订单。</text>
+
+  <text class="h2">六、隐私保护</text>
+  <text class="p">我们尊重并保护用户隐私，具体详见《隐私政策》。</text>
+
+  <text class="h2">七、协议变更</text>
+  <text class="p">平台有权根据需要修改本协议，重大变更将通过站内通知告知用户。继续使用本服务即视为接受变更后的协议。</text>
+
+  <text class="footer">更新日期：2026-08-03</text>
+</view>

@@ -9,6 +9,8 @@
     "pages/order-create/order-create",
     "pages/newspaper-edit/newspaper-edit",
     "pages/user-admin/user-admin",
+    "pages/agreement/agreement",
+    "pages/privacy/privacy",
     "pages/profile/profile",
     "pages/statistics/statistics"
   ],
