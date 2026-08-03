@@ -131,26 +131,37 @@ with app.app_context():
     else:
         print(f"⏭️  报刊表已有数据，跳过导入")
 
-    # 3. 创建默认管理员（如果不存在）
-    if not LoginUser.query.filter_by(username='admin').first():
+    # 3. 创建/更新默认管理员
+    admin_user = LoginUser.query.filter_by(username='admin').first()
+    env_password = os.environ.get('ADMIN_PASSWORD')
+
+    if not admin_user:
         import secrets as _secrets
-        # 生产环境用环境变量 ADMIN_PASSWORD，否则生成随机密码（打印一次，不再写死 admin123）
-        admin_password = os.environ.get('ADMIN_PASSWORD') or _secrets.token_urlsafe(12)
-        admin = LoginUser(
+        # 生产环境用环境变量 ADMIN_PASSWORD，否则生成随机密码
+        admin_password = env_password or _secrets.token_urlsafe(12)
+        admin_user = LoginUser(
             username='admin',
             password_hash=generate_password_hash(admin_password),
             role='admin',
             created_at=datetime.now()
         )
-        db.session.add(admin)
+        db.session.add(admin_user)
         db.session.commit()
-        if os.environ.get('ADMIN_PASSWORD'):
+        if env_password:
             print("✅ 默认管理员已创建（用户名: admin，密码来自环境变量 ADMIN_PASSWORD）")
         else:
             print(f"✅ 默认管理员已创建（用户名: admin）")
             print(f"🔑 初始密码: {admin_password}")
             print("⚠️  请尽快登录后修改密码！")
+    elif env_password:
+        # 管理员已存在且配置了 ADMIN_PASSWORD → 同步更新密码
+        if not check_password_hash(admin_user.password_hash, env_password):
+            admin_user.password_hash = generate_password_hash(env_password)
+            db.session.commit()
+            print("✅ 管理员密码已同步更新（来自环境变量 ADMIN_PASSWORD）")
+        else:
+            print("✅ 管理员密码已是最新，无需更新")
     else:
-        print("⏭️  管理员账号已存在，跳过")
+        print("⏭️  管理员账号已存在，未配置 ADMIN_PASSWORD，保持原密码不变")
 
     print("\n🎉 初始化完成！")
