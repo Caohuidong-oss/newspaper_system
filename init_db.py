@@ -2,7 +2,7 @@
 import os
 from app import app, db
 from models import User, Newspaper, LoginUser
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from sqlalchemy import text
 
