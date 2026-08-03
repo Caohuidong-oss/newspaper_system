@@ -10,9 +10,11 @@
 
         <div class="mb-3">
             <label class="form-label fw-bold">1️⃣ 登录获取 token</label>
-            <button class="btn btn-primary w-100" onclick="testLogin()">
-                🔑 用 admin / admin123 登录
-            </button>
+            <div class="input-group mb-2">
+                <input type="text" id="loginUser" class="form-control" placeholder="用户名" value="admin">
+                <input type="password" id="loginPass" class="form-control" placeholder="密码">
+                <button class="btn btn-primary" onclick="testLogin()">🔑 登录</button>
+            </div>
             <div id="loginResult" class="mt-2 small"></div>
         </div>
 
@@ -48,11 +50,17 @@ function setResult(elId, html) {
 }
 
 async function testLogin() {
+    const username = document.getElementById('loginUser').value.trim();
+    const password = document.getElementById('loginPass').value;
+    if (!username || !password) {
+        setResult('loginResult', '❌ 请输入用户名和密码');
+        return;
+    }
     try {
         const r = await fetch(API + '/auth/dev_login', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({username: 'admin', password: 'admin123'})
+            body: JSON.stringify({username: username, password: password})
         });
         const j = await r.json();
         if (j.code === 0) {

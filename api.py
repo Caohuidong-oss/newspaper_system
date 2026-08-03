@@ -15,7 +15,9 @@ from models import db, User, Newspaper, Order, Subscription, LoginUser
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # ── 配置 ──────────────────────────────────────────
-JWT_SECRET = os.environ.get('JWT_SECRET') or os.environ.get('SECRET_KEY') or 'api-jwt-dev-key'
+# JWT 密钥复用 SECRET_KEY（生产必须配置，config.py 已做随机兜底）
+from config import Config as _Config
+JWT_SECRET = os.environ.get('JWT_SECRET') or _Config.SECRET_KEY
 JWT_EXPIRY_HOURS = 72
 # 微信小程序配置（后补）
 WX_APPID = os.environ.get('WX_APPID', '')

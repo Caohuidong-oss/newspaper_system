@@ -20,6 +20,9 @@
     "navigationBarTextStyle": "white",
     "backgroundColor": "#f5f7fa"
   },
+  "privacyLocation": {
+    "desc": "本小程序将收集您的用户名、手机号、收货地址，仅用于账号注册、订单配送和联系，不会向第三方共享。详见《隐私政策》。"
+  },
   "lazyCodeLoading": "requiredComponents",
   "tabBar": {
     "color": "#999",

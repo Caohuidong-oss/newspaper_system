@@ -1,4 +1,5 @@
 """Railway 部署初始化脚本：创建表 + 导入初始数据"""
+import os
 from app import app, db
 from models import User, Newspaper, LoginUser
 from werkzeug.security import generate_password_hash
@@ -132,15 +133,23 @@ with app.app_context():
 
     # 3. 创建默认管理员（如果不存在）
     if not LoginUser.query.filter_by(username='admin').first():
+        import secrets as _secrets
+        # 生产环境用环境变量 ADMIN_PASSWORD，否则生成随机密码（打印一次，不再写死 admin123）
+        admin_password = os.environ.get('ADMIN_PASSWORD') or _secrets.token_urlsafe(12)
         admin = LoginUser(
             username='admin',
-            password_hash=generate_password_hash('admin123'),
+            password_hash=generate_password_hash(admin_password),
             role='admin',
             created_at=datetime.now()
         )
         db.session.add(admin)
         db.session.commit()
-        print("✅ 默认管理员已创建（用户名: admin，密码: admin123）")
+        if os.environ.get('ADMIN_PASSWORD'):
+            print("✅ 默认管理员已创建（用户名: admin，密码来自环境变量 ADMIN_PASSWORD）")
+        else:
+            print(f"✅ 默认管理员已创建（用户名: admin）")
+            print(f"🔑 初始密码: {admin_password}")
+            print("⚠️  请尽快登录后修改密码！")
     else:
         print("⏭️  管理员账号已存在，跳过")
 

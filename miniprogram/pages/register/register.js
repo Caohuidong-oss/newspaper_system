@@ -62,14 +62,17 @@ Page({
       return;
     }
 
-    this.setData({ loading: true });
-    api.register({
-      username: username.trim(),
-      password: password,
-      real_name: realName.trim() || username.trim(),
-      phone: phone.trim(),
-      address: address.trim(),
-    })
+    // 收集信息前先获取隐私授权（微信审核要求），授权成功后再提交
+    const app = getApp();
+    const doRegister = () => {
+      this.setData({ loading: true });
+      api.register({
+        username: username.trim(),
+        password: password,
+        real_name: realName.trim() || username.trim(),
+        phone: phone.trim(),
+        address: address.trim(),
+      })
       .then(res => {
         const { token, username: uname, role } = res;
         wx.setStorageSync('token', token);
@@ -93,6 +96,18 @@ Page({
       .finally(() => {
         this.setData({ loading: false });
       });
+    };
+
+    // 触发隐私授权，授权通过后执行注册
+    if (typeof app.checkPrivacyAuthorization === 'function') {
+      app.checkPrivacyAuthorization()
+        .then(doRegister)
+        .catch(() => {
+          wx.showToast({ title: '需同意隐私政策才能注册', icon: 'none' });
+        });
+    } else {
+      doRegister();
+    }
   },
 
   onBackToLogin() {
